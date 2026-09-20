@@ -3,6 +3,11 @@
 
 #include "triangle.hpp"
 
+#include <optional>
+
+std::optional<std::vector<Triangle>> ReadTriangles(std::istream& in);
+std::vector<float> FlattenVertices(const std::vector<Triangle>& triangles);
+
 struct Matrix4x4 {
     // Matrix4x4& operator+(const Matrix4x4& other) {
     //    return {};

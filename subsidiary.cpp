@@ -35,9 +35,9 @@ std::vector<float> FlattenVertices(const std::vector<Triangle>& triangles) {
     std::vector<float> flat;
     flat.reserve(triangles.size() * 9);
 
-    for (const Triangle& t : triangles) {
-        for (int i = 0; i < 3; ++i) {
-            const Vec3& vertex = t.GetVertex(i);
+    for (const Triangle& tr : triangles) {
+        for (size_t i = 0; i < 3; i++) {
+            const Vec3& vertex = tr.GetVertex(i);
             flat.push_back(vertex.GetX());
             flat.push_back(vertex.GetY());
             flat.push_back(vertex.GetZ());

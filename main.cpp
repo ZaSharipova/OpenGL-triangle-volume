@@ -4,6 +4,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <optional>
 
 #include "subsidiary.hpp"
 #include "triangle.hpp"
@@ -137,6 +138,12 @@ void ProcessInput(GLFWwindow* window, Camera& camera) {
 
 int main(void) {
     std::vector<Triangle> triangles;
+    std::optional<std::vector<Triangle>> result = ReadTriangles(std::cin);
+    if (result == std::nullopt) {
+        return -1;
+    }
+
+    triangles = result.value(); //
 
     if (!glfwInit()) {
         std::cerr << "Failed to init glfw\n";
@@ -186,11 +193,7 @@ int main(void) {
     Matrix4x4 model = Identity();
     Matrix4x4 projection = Perspective(0.785f, 800.0f / 600.0f, 0.1f, 100.0f);
 
-    float vertices[] = {
-    -0.5f, -0.5f, -2.0f,
-    0.5f, -0.5f, -2.0f,
-    0.0f, 0.5f, -2.0f
-    };
+    std::vector<float> flat = FlattenVertices(triangles);
 
     unsigned int VAO = 0, VBO = 0;
     glGenVertexArrays(1, &VAO);
@@ -198,7 +201,7 @@ int main(void) {
 
     glBindVertexArray(VAO);
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(flat.size() * sizeof(float)), flat.data(), GL_STATIC_DRAW);
 
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
@@ -224,7 +227,7 @@ int main(void) {
         glUniformMatrix4fv(loc_view, 1, GL_TRUE, &(view.matrix[0][0]));
         glUniformMatrix4fv(loc_projection, 1, GL_TRUE, &(projection.matrix[0][0]));
         glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(triangles.size() * 3));
 
         glfwSwapBuffers(window);
     }
