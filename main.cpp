@@ -9,49 +9,26 @@
 #include "subsidiary.hpp"
 #include "triangle.hpp"
 
-Matrix4x4 Identity() {
-    return {1, 0, 0, 0,
-            0, 1, 0, 0,
-            0, 0, 1, 0,
-            0, 0, 0, 1};
-}
-
-Matrix4x4 Perspective(float fov, float aspect, float near, float far) {
-    return {1 / (aspect * std::tan(fov / 2)), 0, 0, 0,
-            0, 1 / std::tan(fov / 2), 0, 0,
-            0, 0, -((far + near) / (far - near)), -(2 * far *near) / (far - near),
-            0, 0, -1, 0};
-}
-
-Matrix4x4 ViewMatrix(const Vec3& eye, const Vec3& target, const Vec3& up) {
-    Vec3 direction_unnormalized = eye - target;
-    Vec3 direction = direction_unnormalized.Normalize();
-
-    Vec3 right = up.FindCross(direction).Normalize(); // господи как это ужасно ;;;(((
-    Vec3 up_real = direction.FindCross(right);
-
-    return {right.GetX(), right.GetY(), right.GetZ(), -right.FindDot(eye),
-            up_real.GetX(), up_real.GetY(), up_real.GetZ(), -up_real.FindDot(eye),
-            direction.GetX(), direction.GetY(), direction.GetZ(), -direction.FindDot(eye),
-            0, 0, 0, 1};
-}
-
-
 const size_t LOG_ARRAY_SIZE = 512;
 
 const char *vertexShaderSrc = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
+    "layout (location = 1) in float aFlag;\n"
+    "out float vFlag;"
     "uniform mat4 model;"
     "uniform mat4 view;"
     "uniform mat4 projection;"
     "void main() {\n"
+    "   vFlag = aFlag;\n"
     "   gl_Position = projection * view * model * vec4(aPos, 1.0);"
     "}";
 
 const char *fragmentShaderSrc = "#version 330 core\n"
+    "in float vFlag;\n"
     "out vec4 FlagColor;\n"
     "void main() {\n"
-    "   FlagColor = vec4(2.0, 0.5, 0.2, 0.1);"
+    "   vec3 color = vFlag > 0 ? vec3(1.0, 0.2, 0.2) : vec3(0.2, 0.6, 1.0);\n"
+    "   FlagColor = vec4(color, 1.0);"
     "}";
 
 unsigned int compileShader(GLenum type, const char* src) {
@@ -142,8 +119,17 @@ int main(void) {
     if (result == std::nullopt) {
         return -1;
     }
+    triangles = result.value();
 
-    triangles = result.value(); //
+    size_t size = triangles.size();
+    std::vector<bool> intersecting(size, false);
+    for (size_t i = 0; i < size; i++) {
+        for (size_t j = i + 1; j < size; j++) {
+            if (triangles[i].HaveIntersection(triangles[j])) {
+                intersecting[i] = intersecting[j] = true;
+            }
+        }
+    }
 
     if (!glfwInit()) {
         std::cerr << "Failed to init glfw\n";
@@ -193,7 +179,7 @@ int main(void) {
     Matrix4x4 model = Identity();
     Matrix4x4 projection = Perspective(0.785f, 800.0f / 600.0f, 0.1f, 100.0f);
 
-    std::vector<float> flat = FlattenVertices(triangles);
+    std::vector<float> flat = FlattenVertices(triangles, intersecting);
 
     unsigned int VAO = 0, VBO = 0;
     glGenVertexArrays(1, &VAO);
@@ -203,8 +189,11 @@ int main(void) {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(flat.size() * sizeof(float)), flat.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
+
+    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
     glEnable(GL_DEPTH_TEST);
 

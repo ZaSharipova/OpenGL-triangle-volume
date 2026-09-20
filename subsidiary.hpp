@@ -6,14 +6,15 @@
 #include <optional>
 
 std::optional<std::vector<Triangle>> ReadTriangles(std::istream& in);
-std::vector<float> FlattenVertices(const std::vector<Triangle>& triangles);
+std::vector<float> FlattenVertices(const std::vector<Triangle>& triangles, const std::vector<bool>& intersecting);
 
 struct Matrix4x4 {
-    // Matrix4x4& operator+(const Matrix4x4& other) {
-    //    return {};
-    // }
     float matrix[4][4];
 };
+
+Matrix4x4 Identity();
+Matrix4x4 Perspective(float fov, float aspect, float near, float far);
+Matrix4x4 ViewMatrix(const Vec3& eye, const Vec3& target, const Vec3& up);
 
 struct Camera {
     Vec3 pos {0.0f, 0.0f, 3.0f};
