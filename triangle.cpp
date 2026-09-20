@@ -11,17 +11,25 @@ class Triangle;
 
 std::array<Vec3, 11> FindAxes(const Triangle& tr1, const Triangle& tr2);
 bool HaveOverlap(const std::pair<float, float>& A, const std::pair<float, float>& B);
-Vec3 Normalize(const Vec3& vec);
 
 bool AreEqual(const float number_1, const float number_2) {
     return std::abs(number_1 - number_2) < 1e-9;
+}
+
+//----------------
+Vec3 Vec3::operator+(const Vec3& other) const {
+    return Vec3(x_ + other.x_, y_ + other.y_, z_ + other.z_);
 }
 
 Vec3 Vec3::operator-(const Vec3& other) const {
     return Vec3(x_ - other.x_, y_ - other.y_, z_ - other.z_);
 }
 
-Vec3 Vec3::operator/(float divisor) const {
+Vec3 Vec3::operator*(const float factor) const {
+    return Vec3(x_ * factor, y_ * factor, z_ * factor);
+}
+
+Vec3 Vec3::operator/(const float divisor) const {
     return Vec3(x_ / divisor, y_ / divisor, z_ / divisor);
 }
 
@@ -41,6 +49,39 @@ float Vec3::FindLength() const {
 
 bool Vec3::IsDegenerate() const {
     return AreEqual(x_, 0.0f) && AreEqual(y_, 0.0f) && AreEqual(z_, 0.0f);
+}
+
+Vec3 Vec3::Normalize() {
+    float length = FindLength();
+    if (AreEqual(length, 0.0f)) {
+        return {0.0, 0.0, 0.0}; // TODO
+    }
+
+    return *this / length;
+}
+
+float Vec3::GetX() const {
+    return x_;
+}
+
+float Vec3::GetY() const {
+    return y_;
+}
+
+float Vec3::GetZ() const {
+    return z_;
+}
+
+void Vec3::SetX(const float& x) {
+    x_ = x;
+}
+
+void Vec3::SetY(const float& y) {
+    y_ = y;
+}
+
+void Vec3::SetZ(const float& z) {
+    z_= z;
 }
 
 //------------------------------------------
@@ -81,6 +122,10 @@ std::pair<float, float> Triangle::FindMinMaxCoordsOnAxis(const Vec3& axis) const
     return {min_param, max_param};
 }
 
+const Vec3& Triangle::GetVertex(size_t index) const {
+    return vertices[index];
+}
+
 //------------------------------------------
 bool HaveOverlap(const std::pair<float, float>& A, const std::pair<float, float>& B) {
     float A_1 = A.first, A_2 = A.second, B_1 = B.first, B_2 = B.second;
@@ -101,13 +146,4 @@ std::array<Vec3, 11> FindAxes(const Triangle& tr1, const Triangle& tr2) {
     }
 
     return res_array;
-}
-
-Vec3 Normalize(const Vec3& vec) {
-    float length = vec.FindLength();
-    if (AreEqual(length, 0.0f)) {
-        return {0.0, 0.0, 0.0}; // TODO
-    }
-
-    return vec / length;
 }

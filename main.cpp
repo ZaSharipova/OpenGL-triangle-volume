@@ -1,10 +1,12 @@
 #include <iostream>
 #include <cassert>
+#include <numbers>
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
 #include "subsidiary.hpp"
+#include "triangle.hpp"
 
 Matrix4x4 Identity() {
     return {1, 0, 0, 0,
@@ -19,6 +21,20 @@ Matrix4x4 Perspective(float fov, float aspect, float near, float far) {
             0, 0, -((far + near) / (far - near)), -(2 * far *near) / (far - near),
             0, 0, -1, 0};
 }
+
+Matrix4x4 ViewMatrix(const Vec3& eye, const Vec3& target, const Vec3& up) {
+    Vec3 direction_unnormalized = eye - target;
+    Vec3 direction = direction_unnormalized.Normalize();
+
+    Vec3 right = up.FindCross(direction).Normalize(); // господи как это ужасно ;;;(((
+    Vec3 up_real = direction.FindCross(right);
+
+    return {right.GetX(), right.GetY(), right.GetZ(), -right.FindDot(eye),
+            up_real.GetX(), up_real.GetY(), up_real.GetZ(), -up_real.FindDot(eye),
+            direction.GetX(), direction.GetY(), direction.GetZ(), -direction.FindDot(eye),
+            0, 0, 0, 1};
+}
+
 
 const size_t LOG_ARRAY_SIZE = 512;
 
@@ -56,7 +72,72 @@ unsigned int compileShader(GLenum type, const char* src) {
     return shader;
 }
 
+void MouseCallback(GLFWwindow* window, double x_coord, double y_coord) {
+    Camera *cam = static_cast<Camera *>(glfwGetWindowUserPointer(window));
+    if (!cam) {
+        std::cerr << "Failed getting a cam\n";
+        return; // TODO
+    }
+
+    if (cam->firstMouse) {
+        cam->lastX = static_cast<float>(x_coord);
+        cam->lastY = static_cast<float>(y_coord);
+        cam->firstMouse = false;
+        return;
+    }
+
+    float dx = static_cast<float>(x_coord) - cam->lastX;
+    float dy = -static_cast<float>(y_coord) + cam->lastY;
+    cam->lastX = static_cast<float>(x_coord);
+    cam->lastY = static_cast<float>(y_coord);
+
+    cam->yaw += dx * cam->mouseSensitivity;
+    cam->pitch += dy * cam->mouseSensitivity;
+
+    if (cam->pitch > 89.0f) {
+        cam->pitch = 89.0f;
+    }
+
+    if (cam->pitch < -89.0f) {
+        cam->pitch = -89.0f;
+    }
+
+    const float toRad = std::numbers::pi / 180.0f;
+    float yawR = cam->yaw * toRad;
+    float pitchR = cam->pitch * toRad;
+
+    Vec3 vec;
+    vec.SetX(std::cos(yawR) * std::cos(pitchR));
+    vec.SetY(std::sin(pitchR));
+    vec.SetZ(std::sin(yawR) * std::cos(pitchR));
+    cam->front = vec.Normalize();
+}
+
+void ProcessInput(GLFWwindow* window, Camera& camera) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
+
+    const float cameraSpeed = 0.05f;
+    Vec3 right = camera.front.FindCross(camera.up).Normalize();
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        camera.pos = camera.pos + camera.front * cameraSpeed; // TODO
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        camera.pos = camera.pos - camera.front * cameraSpeed;
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        camera.pos = camera.pos + right * cameraSpeed;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        camera.pos = camera.pos - right * cameraSpeed;
+    }
+}
+
 int main(void) {
+    std::vector<Triangle> triangles;
+
     if (!glfwInit()) {
         std::cerr << "Failed to init glfw\n";
         return -1;
@@ -103,7 +184,6 @@ int main(void) {
     int loc_view = glGetUniformLocation(program, "view");
     int loc_projection = glGetUniformLocation(program, "projection");
     Matrix4x4 model = Identity();
-    Matrix4x4 view = Identity();
     Matrix4x4 projection = Perspective(0.785f, 800.0f / 600.0f, 0.1f, 100.0f);
 
     float vertices[] = {
@@ -125,7 +205,17 @@ int main(void) {
 
     glEnable(GL_DEPTH_TEST);
 
+    Camera camera {};
+    glfwSetWindowUserPointer(window, &camera);
+
+    glfwSetCursorPosCallback(window, MouseCallback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
     while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+        ProcessInput(window, camera);
+        Matrix4x4 view = ViewMatrix(camera.pos, camera.pos + camera.front, camera.up);
+
         glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -137,7 +227,6 @@ int main(void) {
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         glfwSwapBuffers(window);
-        glfwPollEvents();
     }
 
     glDeleteVertexArrays(1, &VAO);
