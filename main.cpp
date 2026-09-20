@@ -4,12 +4,31 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include "subsidiary.hpp"
+
+Matrix4x4 Identity() {
+    return {1, 0, 0, 0,
+            0, 1, 0, 0,
+            0, 0, 1, 0,
+            0, 0, 0, 1};
+}
+
+Matrix4x4 Perspective(float fov, float aspect, float near, float far) {
+    return {1 / (aspect * std::tan(fov / 2)), 0, 0, 0,
+            0, 1 / std::tan(fov / 2), 0, 0,
+            0, 0, -((far + near) / (far - near)), -(2 * far *near) / (far - near),
+            0, 0, -1, 0};
+}
+
 const size_t LOG_ARRAY_SIZE = 512;
 
 const char *vertexShaderSrc = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
+    "uniform mat4 model;"
+    "uniform mat4 view;"
+    "uniform mat4 projection;"
     "void main() {\n"
-    "   gl_Position = vec4(aPos, 1.0);"
+    "   gl_Position = projection * view * model * vec4(aPos, 1.0);"
     "}";
 
 const char *fragmentShaderSrc = "#version 330 core\n"
@@ -80,10 +99,17 @@ int main(void) {
     glDeleteShader(vertex_shader);
     glDeleteShader(fragment_shader);
 
+    int loc_model = glGetUniformLocation(program, "model");
+    int loc_view = glGetUniformLocation(program, "view");
+    int loc_projection = glGetUniformLocation(program, "projection");
+    Matrix4x4 model = Identity();
+    Matrix4x4 view = Identity();
+    Matrix4x4 projection = Perspective(0.785f, 800.0f / 600.0f, 0.1f, 100.0f);
+
     float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-    0.5f, -0.5f, 0.0f,
-    0.0f, 0.5f, 0.0f
+    -0.5f, -0.5f, -2.0f,
+    0.5f, -0.5f, -2.0f,
+    0.0f, 0.5f, -2.0f
     };
 
     unsigned int VAO = 0, VBO = 0;
@@ -97,11 +123,16 @@ int main(void) {
     glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
+    glEnable(GL_DEPTH_TEST);
+
     while (!glfwWindowShouldClose(window)) {
         glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
         glUseProgram(program);
+        glUniformMatrix4fv(loc_model, 1, GL_TRUE, &(model.matrix[0][0]));
+        glUniformMatrix4fv(loc_view, 1, GL_TRUE, &(view.matrix[0][0]));
+        glUniformMatrix4fv(loc_projection, 1, GL_TRUE, &(projection.matrix[0][0]));
         glBindVertexArray(VAO);
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
