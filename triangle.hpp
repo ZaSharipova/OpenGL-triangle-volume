@@ -1,22 +1,40 @@
 #ifndef TRIANGLE_HPP_
 #define TRIANGLE_HPP_
 
-#include <iostream>
-// #include <cmath>
+#include <cmath>
+#include <limits>
+#include <array>
+#include <utility>
+#include <algorithm>
+
+class Vec3 {
+public:
+    Vec3(float x, float y, float z) : x_(x), y_(y), z_(z) {}
+    Vec3() = default;
+
+    Vec3 operator-(const Vec3& other) const;
+    Vec3 operator/(float divisor) const;
+    Vec3 FindCross(const Vec3& other) const;
+    float FindDot(const Vec3& other) const;
+    float FindLength() const;
+    bool IsDegenerate() const;
+
+private:
+    float x_, y_, z_;
+};
 
 class Triangle {
 public:
-    Triangle(float x_coord, float y_coord, float z_coord) : x_coord(x_coord), y_coord(y_coord), z_coord(z_coord) {}
+    Triangle(Vec3 v1, Vec3 v2, Vec3 v3) : vertices{v1, v2, v3} {}
 
-    float FindDist(Triangle& other) {
-        return std::sqrt(std::pow(x_coord - other.x_coord, 2)
-                       + std::pow(y_coord - other.y_coord, 2)
-                       + std::pow(z_coord - other.z_coord, 2));
-    }
-
+    Vec3 FindEdge(int index) const;
+    Vec3 FindNormal() const;
+    bool HaveIntersection(const Triangle& other) const;
 
 private:
-    float x_coord = 0, y_coord = 0, z_coord = 0;
+    std::pair<float, float> FindMinMaxCoordsOnAxis(const Vec3& axis) const;
+
+    Vec3 vertices[3];
 };
 
 #endif // TRIANGLE_HPP_
