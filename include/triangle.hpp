@@ -6,6 +6,7 @@
 #include <array>
 #include <utility>
 #include <algorithm>
+#include <vector>
 
 class Vec3 {
 public:
@@ -46,5 +47,7 @@ private:
 
     Vec3 vertices[3];
 };
+
+std::vector<bool> FindIntersectingFlags(const std::vector<Triangle>& triangles);
 
 #endif // TRIANGLE_HPP_
