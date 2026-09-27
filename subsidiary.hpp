@@ -4,6 +4,7 @@
 #include "triangle.hpp"
 
 #include <optional>
+#include <vector>
 
 std::optional<std::vector<Triangle>> ReadTriangles(std::istream& in);
 std::vector<float> FlattenVertices(const std::vector<Triangle>& triangles, const std::vector<bool>& intersecting);

@@ -13,22 +13,41 @@ const size_t LOG_ARRAY_SIZE = 512;
 
 const char *vertexShaderSrc = "#version 330 core\n"
     "layout (location = 0) in vec3 aPos;\n"
-    "layout (location = 1) in float aFlag;\n"
+    "layout (location = 1) in vec3 aNormal;\n"
+    "layout (location = 2) in float aFlag;\n"
     "out float vFlag;"
+    "out vec3 vFlagPos;\n"
+    "out vec3 vNormal;\n"
     "uniform mat4 model;"
     "uniform mat4 view;"
     "uniform mat4 projection;"
+
     "void main() {\n"
     "   vFlag = aFlag;\n"
+    "   vNormal = aNormal;\n"
+    "   vFlagPos = vec3(model * vec4(aPos, 1.0));\n"
     "   gl_Position = projection * view * model * vec4(aPos, 1.0);"
     "}";
 
 const char *fragmentShaderSrc = "#version 330 core\n"
     "in float vFlag;\n"
+    "in vec3 vFlagPos;\n"
+    "in vec3 vNormal;\n"
     "out vec4 FlagColor;\n"
+
     "void main() {\n"
+    "   vec3 lightPos = vec3(0.0, 5.0, 5.0);\n"
+    "   vec3 lightColor = vec3(1.0);\n"
+    "   float ambientStrength = 0.2;\n"
+    "   vec3 ambient = ambientStrength * lightColor;\n"
+
+    "   vec3 N = normalize(vNormal);\n"
+    "   vec3 L = normalize(lightPos - vFlagPos);\n"
+    "   float diff = max(dot(N, L), 0.0);\n"
+    "   vec3 diffuse = diff * lightColor;\n"
     "   vec3 color = vFlag > 0 ? vec3(1.0, 0.2, 0.2) : vec3(0.2, 0.6, 1.0);\n"
-    "   FlagColor = vec4(color, 1.0);"
+    "   vec3 result = (ambient + diffuse) * color;\n"
+    "   FlagColor = vec4(result, 1.0);"
     "}";
 
 unsigned int compileShader(GLenum type, const char* src) {
@@ -189,11 +208,14 @@ int main(void) {
     glBindBuffer(GL_ARRAY_BUFFER, VBO);
     glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(flat.size() * sizeof(float)), flat.data(), GL_STATIC_DRAW);
 
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(0);
 
-    glVertexAttribPointer(1, 1, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(3 * sizeof(float)));
+    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(3 * sizeof(float)));
     glEnableVertexAttribArray(1);
+
+    glVertexAttribPointer(2, 1, GL_FLOAT, GL_FALSE, 7 * sizeof(float), (void*)(6 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
     glEnable(GL_DEPTH_TEST);
 

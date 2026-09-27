@@ -33,16 +33,20 @@ std::optional<std::vector<Triangle>> ReadTriangles(std::istream& in) {
 
 std::vector<float> FlattenVertices(const std::vector<Triangle>& triangles, const std::vector<bool>& intersecting) {
     std::vector<float> flat;
-    flat.reserve(triangles.size() * 12);
+    flat.reserve(triangles.size() * 7 * 3);
 
     for (size_t tr_index = 0; tr_index < triangles.size(); tr_index++) {
         const Triangle& tr = triangles[tr_index];
+        Vec3 normal = tr.FindNormal().Normalize();
 
         for (size_t i = 0; i < 3; i++) {
             const Vec3& vertex = tr.GetVertex(i);
             flat.push_back(vertex.GetX());
             flat.push_back(vertex.GetY());
             flat.push_back(vertex.GetZ());
+            flat.push_back(normal.GetX());
+            flat.push_back(normal.GetY());
+            flat.push_back(normal.GetZ());
             flat.push_back(intersecting[tr_index]);
         }
 
