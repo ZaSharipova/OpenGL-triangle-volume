@@ -9,7 +9,7 @@
 class Vec3;
 class Triangle;
 
-std::array<Vec3, 11> FindAxes(const Triangle& tr1, const Triangle& tr2);
+std::array<Vec3, 17> FindAxes(const Triangle& tr1, const Triangle& tr2);
 bool HaveOverlap(const std::pair<float, float>& A, const std::pair<float, float>& B);
 
 bool AreEqual(const float number_1, const float number_2) {
@@ -94,7 +94,7 @@ Vec3 Triangle::FindNormal() const {
 }
 
 bool Triangle::HaveIntersection(const Triangle& other) const {
-    std::array<Vec3, 11> axes = FindAxes(*this, other);
+    std::array<Vec3, 17> axes = FindAxes(*this, other);
     for (const auto& axis : axes) {
         if (axis.IsDegenerate()) {
             continue;
@@ -133,17 +133,28 @@ bool HaveOverlap(const std::pair<float, float>& A, const std::pair<float, float>
     return !(A_1 > B_2 || B_1 > A_2);
 }
 
-std::array<Vec3, 11> FindAxes(const Triangle& tr1, const Triangle& tr2) {
-    std::array<Vec3, 11> res_array {};
+std::array<Vec3, 17> FindAxes(const Triangle& tr1, const Triangle& tr2) {
+    std::array<Vec3, 17> res_array {};
     size_t res_array_index = 0;
-    res_array[res_array_index++] = tr1.FindNormal();
-    res_array[res_array_index++] = tr2.FindNormal();
+    Vec3 normalA = tr1.FindNormal();
+    Vec3 normalB = tr2.FindNormal();
+    res_array[res_array_index++] = normalA;
+    res_array[res_array_index++] = normalB;
 
     for (size_t i = 0; i < 3; i++) {
         for (size_t j = 0; j < 3; j++) {
             res_array[res_array_index++] = tr1.FindEdge(i).FindCross(tr2.FindEdge(j));
         }
     }
+
+    for (size_t i = 0; i < 3; i++) {
+        res_array[res_array_index++] = tr1.FindEdge(i).FindCross(normalA);
+    }
+
+    for (size_t i = 0; i < 3; i++) {
+        res_array[res_array_index++] = tr2.FindEdge(i).FindCross(normalB);
+    }
+
 
     return res_array;
 }
