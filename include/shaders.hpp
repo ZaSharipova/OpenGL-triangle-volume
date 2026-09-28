@@ -33,7 +33,7 @@ const char* trianglefFragmentShaderSrc = "#version 330 core\n"
 
     "   vec3 N = normalize(vNormal);\n"
     "   vec3 L = normalize(lightPos - vFlagPos);\n"
-    "   float diff = max(dot(N, L), 0.0);\n"
+    "   float diff = abs(dot(N, L));\n"
     "   vec3 diffuse = diff * lightColor;\n"
     "   vec3 color = vFlag > 0 ? vec3(1.0, 0.2, 0.2) : vec3(0.2, 0.6, 1.0);\n"
     "   vec3 result = (ambient + diffuse) * color;\n"
