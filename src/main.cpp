@@ -10,16 +10,16 @@
 #include "shaders.hpp"
 
 int main(void) {
-    std::optional<std::vector<Triangle>> result = ReadTriangles(std::cin);
+    std::optional<std::vector<geometry::Triangle>> result = ReadTriangles(std::cin);
     if (result == std::nullopt) {
         return -1;
     }
-    std::vector<Triangle> triangles = result.value();
+    std::vector<geometry::Triangle> triangles = result.value();
 
     std::vector<bool> intersecting = FindIntersectingFlags(triangles);
 
-    std::pair<Vec3, Vec3> boundingBox = FindBoundingBox(triangles);
-    std::array<Vec3, kNumberOfVerticesInCube> cubeCorners = FindCubeCorners(boundingBox);
+    std::pair<geometry::Vec3, geometry::Vec3> boundingBox = FindBoundingBox(triangles);
+    std::array<geometry::Vec3, kNumberOfVerticesInCube> cubeCorners = FindCubeCorners(boundingBox);
     std::vector<float> cubeEdgePoints = FindCubeEdgePoints(cubeCorners);
     std::vector<float> triangleVertices = FlattenVertices(triangles, intersecting);
 

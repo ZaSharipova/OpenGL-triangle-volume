@@ -147,7 +147,7 @@ void MouseCallback(GLFWwindow* window, double x_coord, double y_coord) {
     float yawR = cam->yaw * toRad;
     float pitchR = cam->pitch * toRad;
 
-    Vec3 vec;
+    geometry::Vec3 vec;
     vec.SetX(std::cos(yawR) * std::cos(pitchR));
     vec.SetY(std::sin(pitchR));
     vec.SetZ(std::sin(yawR) * std::cos(pitchR));

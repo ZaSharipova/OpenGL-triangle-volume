@@ -9,7 +9,7 @@
 constexpr size_t kNumberOfVerticesInCube = 8;
 constexpr size_t kNumberOfEdgesInCube = 12;
 
-std::vector<float> FlattenVertices(const std::vector<Triangle>& triangles, const std::vector<bool>& intersecting);
+std::vector<float> FlattenVertices(const std::vector<geometry::Triangle>& triangles, const std::vector<bool>& intersecting);
 
 struct Matrix4x4 {
     float matrix[4][4];
@@ -17,9 +17,9 @@ struct Matrix4x4 {
 
 Matrix4x4 Identity();
 Matrix4x4 Perspective(float fov, float aspect, float near, float far);
-Matrix4x4 ViewMatrix(const Vec3& eye, const Vec3& target, const Vec3& up);
-std::pair<Vec3, Vec3> FindBoundingBox(const std::vector<Triangle>& triangles);
-std::array<Vec3, kNumberOfVerticesInCube> FindCubeCorners(const std::pair<Vec3, Vec3>& boundingBox);
-std::vector<float> FindCubeEdgePoints(const std::array<Vec3, kNumberOfVerticesInCube>& corners);
+Matrix4x4 ViewMatrix(const geometry::Vec3& eye, const geometry::Vec3& target, const geometry::Vec3& up);
+std::pair<geometry::Vec3, geometry::Vec3> FindBoundingBox(const std::vector<geometry::Triangle>& triangles);
+std::array<geometry::Vec3, kNumberOfVerticesInCube> FindCubeCorners(const std::pair<geometry::Vec3, geometry::Vec3>& boundingBox);
+std::vector<float> FindCubeEdgePoints(const std::array<geometry::Vec3, kNumberOfVerticesInCube>& corners);
 
 #endif // SUBSIDIARY_HPP_

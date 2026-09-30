@@ -7,7 +7,7 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
-std::optional<std::vector<Triangle>> ReadTriangles(std::istream& in);
+std::optional<std::vector<geometry::Triangle>> ReadTriangles(std::istream& in);
 void ProcessInput(GLFWwindow* window, Camera& camera);
 
 #endif // INPUT_H_

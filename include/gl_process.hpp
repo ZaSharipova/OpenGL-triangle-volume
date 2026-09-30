@@ -33,9 +33,9 @@ struct Uniforms {
 };
 
 struct Camera { // не нравится так, надо сделать по-другому
-    Vec3 pos {0.0f, 0.0f, 3.0f};
-    Vec3 front {0.0f, 0.0f, -1.0f};
-    Vec3 up {0.0f, 1.0f, 0.0f};
+    geometry::Vec3 pos {0.0f, 0.0f, 3.0f};
+    geometry::Vec3 front {0.0f, 0.0f, -1.0f};
+    geometry::Vec3 up {0.0f, 1.0f, 0.0f};
 
     float yaw = -90.0f;
     float pitch = 0.0f;
