@@ -3,6 +3,7 @@
 #include <vector>
 #include <optional>
 
+#include "geometry_subsidiary.hpp"
 #include "subsidiary.hpp"
 #include "triangle.hpp"
 #include "input.hpp"

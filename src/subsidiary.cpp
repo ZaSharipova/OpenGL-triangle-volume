@@ -64,26 +64,6 @@ Matrix4x4 ViewMatrix(const geometry::Vec3& eye, const geometry::Vec3& target, co
             0, 0, 0, 1};
 }
 
-std::pair<geometry::Vec3, geometry::Vec3> FindBoundingBox(const std::vector<geometry::Triangle>& triangles) {
-    constexpr float kInf = std::numeric_limits<float>::infinity();
-    std::array<float, 3> min_coord = {kInf, kInf, kInf};
-    std::array<float, 3> max_coord = {-kInf, -kInf, -kInf};
-
-    for (const geometry::Triangle& triangle : triangles) {
-        for (size_t i = 0; i < 3; i++) {
-            const geometry::Vec3& v = triangle.GetVertex(i);
-            const std::array<float, 3> coords = {v.GetX(), v.GetY(), v.GetZ()};
-            for (size_t axis = 0; axis < 3; axis++) {
-                min_coord[axis] = std::min(min_coord[axis], coords[axis]);
-                max_coord[axis] = std::max(max_coord[axis], coords[axis]);
-            }
-        }
-    }
-
-    return { geometry::Vec3(min_coord[0], min_coord[1], min_coord[2]),
-             geometry::Vec3(max_coord[0], max_coord[1], max_coord[2])};
-}
-
 std::array<geometry::Vec3, kNumberOfVerticesInCube> FindCubeCorners(const std::pair<geometry::Vec3, geometry::Vec3>& boundingBox) {
     std::array<geometry::Vec3, kNumberOfVerticesInCube> corners;
 
