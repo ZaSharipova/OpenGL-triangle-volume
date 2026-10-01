@@ -40,3 +40,6 @@ target_link_libraries(tests PRIVATE geometry GTest::gtest_main)
 
 add_executable(triangle_set_test ${SRC_DIR}/triangle_set_test.cpp)
 target_link_libraries(triangle_set_test PRIVATE geometry GTest::gtest_main)
+
+add_executable(test_end_to_end ${SRC_DIR}/test_end_to_end.cpp)
+target_link_libraries(test_end_to_end PRIVATE geometry subsidiary interface GTest::gtest_main)
