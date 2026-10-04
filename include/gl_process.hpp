@@ -7,32 +7,13 @@
 
 #include "subsidiary.hpp"
 
-const size_t LOG_ARRAY_SIZE = 512;
+namespace process {
 
-unsigned int CompileShader(GLenum type, const char* src);
-unsigned int LinkProgram(unsigned int vertex_shader, unsigned int fragment_shader);
-unsigned int CreateShaderProgram(const char* vertex_src, const char* fragment_src);
+constexpr int kWindowWidth = 800;
+constexpr int kWindowHeight = 600;
+constexpr size_t LOG_ARRAY_SIZE = 512;
 
-struct VertexAttribute {
-    GLuint location;
-    GLint componentCount;
-    GLsizei strideFloats;
-    size_t offsetFloats;
-};
-
-struct Mesh {
-    unsigned int vao = 0;
-    unsigned int vbo = 0;
-    GLsizei vertexCount = 0;
-};
-
-struct Uniforms {
-    int model = -1;
-    int view = -1;
-    int projection = -1;
-};
-
-struct Camera { // не нравится так, надо сделать по-другому
+struct Camera {
     geometry::Vec3 pos {0.0f, 0.0f, 3.0f};
     geometry::Vec3 front {0.0f, 0.0f, -1.0f};
     geometry::Vec3 up {0.0f, 1.0f, 0.0f};
@@ -47,14 +28,11 @@ struct Camera { // не нравится так, надо сделать по-д
     float mouseSensitivity = 0.1f;
 };
 
-Mesh CreateMesh(const std::vector<float>& data, const std::vector<VertexAttribute>& attributes, GLsizei verticesPerElement);
-void DestroyMesh(const Mesh& mesh);
+void RunRenderLoop(GLFWwindow* window, const std::vector<float>& triangleVertices,
+        const std::vector<float>& cubeEdgePoints);
+void ProcessInput(GLFWwindow* window, Camera& camera);
 GLFWwindow* CreateGLWindow(int width, int height, const char* title);
-void MouseCallback(GLFWwindow* window, double x_coord, double y_coord);
-Uniforms FindUniforms(unsigned int program);
-void SetMat4Uniform(int location, const Matrix4x4& matrix);
-void DrawMesh(unsigned int program, const Uniforms& uniforms, const Mesh& mesh,
-              GLenum mode, const Matrix4x4& model, const Matrix4x4& view, const Matrix4x4& projection);
 
+} // namespace process
 
 #endif // GL_PROCESS_H_

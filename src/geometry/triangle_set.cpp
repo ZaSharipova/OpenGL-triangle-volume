@@ -98,7 +98,7 @@ void CheckCell(const std::vector<Triangle>& triangles, const std::vector<size_t>
     }
 }
 
-}  // namespace
+} // namespace
 
 std::vector<bool> FindIntersectingFlags(const std::vector<Triangle>& triangles) {
     std::vector<bool> intersecting(triangles.size(), false);
@@ -116,4 +116,4 @@ std::vector<bool> FindIntersectingFlags(const std::vector<Triangle>& triangles) 
     return intersecting;
 }
 
-}  // namespace geometry
+} // namespace geometry

@@ -4,6 +4,8 @@
 #include <vector>
 #include <optional>
 
+namespace subsidiary {
+
 namespace {
     void PushVertex(const geometry::Vec3& vec, std::vector<float>& points) {
         points.push_back(vec.GetX());
@@ -93,3 +95,5 @@ std::vector<float> FindCubeEdgePoints(const std::array<geometry::Vec3, kNumberOf
 
     return points;
 }
+
+} // namespace subsidiary

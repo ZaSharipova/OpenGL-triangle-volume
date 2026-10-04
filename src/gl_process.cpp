@@ -5,85 +5,248 @@
 
 #include "subsidiary.hpp"
 #include "triangle.hpp"
+#include "input.hpp"
+#include "shaders.hpp"
 
-unsigned int CompileShader(GLenum type, const char* src) {
-    assert(src);
+namespace process {
 
-    unsigned int shader = glCreateShader(type);
-    glShaderSource(shader, 1, &src, nullptr);
-    glCompileShader(shader);
+namespace {
 
-    int success_flag = 0;
-    glGetShaderiv(shader, GL_COMPILE_STATUS, &success_flag);
-    if (!success_flag) {
-        char* log = new char [LOG_ARRAY_SIZE];
+    struct VertexAttribute {
+        GLuint location;
+        GLint componentCount;
+        GLsizei strideFloats;
+        size_t offsetFloats;
+    };
 
-        glGetShaderInfoLog(shader, LOG_ARRAY_SIZE, nullptr, log);
-        std::cerr << "Shader error: " << log << "\n";
-        delete[] log;
+    struct Mesh {
+        unsigned int vao = 0;
+        unsigned int vbo = 0;
+        GLsizei vertexCount = 0;
+    };
+
+    struct Uniforms {
+        int model = -1;
+        int view = -1;
+        int projection = -1;
+    };
+
+    void MouseCallback(GLFWwindow* window, double x_coord, double y_coord) {
+        Camera* cam = static_cast<Camera*>(glfwGetWindowUserPointer(window));
+        if (!cam) {
+            std::cerr << "Failed getting a cam\n";
+            return;
+        }
+
+        if (cam->firstMouse) {
+            cam->lastX = static_cast<float>(x_coord);
+            cam->lastY = static_cast<float>(y_coord);
+            cam->firstMouse = false;
+            return;
+        }
+
+        float dx = static_cast<float>(x_coord) - cam->lastX;
+        float dy = -static_cast<float>(y_coord) + cam->lastY;
+        cam->lastX = static_cast<float>(x_coord);
+        cam->lastY = static_cast<float>(y_coord);
+
+        cam->yaw += dx * cam->mouseSensitivity;
+        cam->pitch += dy * cam->mouseSensitivity;
+
+        if (cam->pitch > 89.0f) {
+            cam->pitch = 89.0f;
+        }
+
+        if (cam->pitch < -89.0f) {
+            cam->pitch = -89.0f;
+        }
+
+        const float toRad = std::numbers::pi / 180.0f;
+        float yawR = cam->yaw * toRad;
+        float pitchR = cam->pitch * toRad;
+
+        geometry::Vec3 vec;
+        vec.SetX(std::cos(yawR) * std::cos(pitchR));
+        vec.SetY(std::sin(pitchR));
+        vec.SetZ(std::sin(yawR) * std::cos(pitchR));
+        cam->front = vec.Normalize();
     }
 
-    return shader;
-}
-
-unsigned int LinkProgram(unsigned int vertex_shader, unsigned int fragment_shader) {
-    unsigned int program = glCreateProgram();
-    glAttachShader(program, vertex_shader);
-    glAttachShader(program, fragment_shader);
-    glLinkProgram(program);
-
-    int linked_success_flag = 0;
-    glGetProgramiv(program, GL_LINK_STATUS, &linked_success_flag);
-    if (!linked_success_flag) {
-        char log[LOG_ARRAY_SIZE];
-        glGetProgramInfoLog(program, LOG_ARRAY_SIZE, nullptr, log);
-        std::cerr << "Link error: " << log << "\n";
+    Uniforms FindUniforms(unsigned int program) {
+        Uniforms uniforms;
+        uniforms.model = glGetUniformLocation(program, "model");
+        uniforms.view = glGetUniformLocation(program, "view");
+        uniforms.projection = glGetUniformLocation(program, "projection");
+        return uniforms;
     }
 
-    return program;
-}
-
-unsigned int CreateShaderProgram(const char* vertex_src, const char* fragment_src) {
-    unsigned int vertex_shader = CompileShader(GL_VERTEX_SHADER, vertex_src);
-    unsigned int fragment_shader = CompileShader(GL_FRAGMENT_SHADER, fragment_src);
-
-    unsigned int program = LinkProgram(vertex_shader, fragment_shader);
-
-    glDeleteShader(vertex_shader);
-    glDeleteShader(fragment_shader);
-
-    return program;
-}
-
-Mesh CreateMesh(const std::vector<float>& data, const std::vector<VertexAttribute>& attributes, GLsizei verticesPerElement) {
-    Mesh mesh;
-    mesh.vertexCount = static_cast<GLsizei>(data.size()) / verticesPerElement;
-
-    glGenVertexArrays(1, &mesh.vao);
-    glGenBuffers(1, &mesh.vbo);
-
-    glBindVertexArray(mesh.vao);
-    glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
-    glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.size() * sizeof(float)), data.data(), GL_STATIC_DRAW);
-
-    for (const VertexAttribute& attrib : attributes) {
-        glVertexAttribPointer(
-            attrib.location,
-            attrib.componentCount,
-            GL_FLOAT,
-            GL_FALSE,
-            attrib.strideFloats * static_cast<GLsizei>(sizeof(float)),
-            reinterpret_cast<void*>(attrib.offsetFloats * sizeof(float)));
-
-        glEnableVertexAttribArray(attrib.location);
+    void SetMat4Uniform(int location, const subsidiary::Matrix4x4& matrix) {
+        glUniformMatrix4fv(location, 1, GL_TRUE, &(matrix.matrix[0][0]));
     }
 
-    return mesh;
+    void DrawMesh(unsigned int program, const Uniforms& uniforms, const Mesh& mesh,
+                  GLenum mode, const subsidiary::Matrix4x4& model, const subsidiary::Matrix4x4& view, const subsidiary::Matrix4x4& projection) {
+        glUseProgram(program);
+        SetMat4Uniform(uniforms.model, model);
+        SetMat4Uniform(uniforms.view, view);
+        SetMat4Uniform(uniforms.projection, projection);
+
+        glBindVertexArray(mesh.vao);
+        glDrawArrays(mode, 0, mesh.vertexCount);
+    }
+
+    unsigned int CompileShader(GLenum type, const char* src) {
+        assert(src);
+
+        unsigned int shader = glCreateShader(type);
+        glShaderSource(shader, 1, &src, nullptr);
+        glCompileShader(shader);
+
+        int success_flag = 0;
+        glGetShaderiv(shader, GL_COMPILE_STATUS, &success_flag);
+        if (!success_flag) {
+            char* log = new char [LOG_ARRAY_SIZE];
+
+            glGetShaderInfoLog(shader, LOG_ARRAY_SIZE, nullptr, log);
+            std::cerr << "Shader error: " << log << "\n";
+            delete[] log;
+        }
+
+        return shader;
+    }
+
+    unsigned int LinkProgram(unsigned int vertex_shader, unsigned int fragment_shader) {
+        unsigned int program = glCreateProgram();
+        glAttachShader(program, vertex_shader);
+        glAttachShader(program, fragment_shader);
+        glLinkProgram(program);
+
+        int linked_success_flag = 0;
+        glGetProgramiv(program, GL_LINK_STATUS, &linked_success_flag);
+        if (!linked_success_flag) {
+            char log[LOG_ARRAY_SIZE];
+            glGetProgramInfoLog(program, LOG_ARRAY_SIZE, nullptr, log);
+            std::cerr << "Link error: " << log << "\n";
+        }
+
+        return program;
+    }
+
+    unsigned int CreateShaderProgram(const char* vertex_src, const char* fragment_src) {
+        unsigned int vertex_shader = CompileShader(GL_VERTEX_SHADER, vertex_src);
+        unsigned int fragment_shader = CompileShader(GL_FRAGMENT_SHADER, fragment_src);
+
+        unsigned int program = LinkProgram(vertex_shader, fragment_shader);
+
+        glDeleteShader(vertex_shader);
+        glDeleteShader(fragment_shader);
+
+        return program;
+    }
+
+    Mesh CreateMesh(const std::vector<float>& data, const std::vector<VertexAttribute>& attributes, GLsizei verticesPerElement) {
+        Mesh mesh;
+        mesh.vertexCount = static_cast<GLsizei>(data.size()) / verticesPerElement;
+
+        glGenVertexArrays(1, &mesh.vao);
+        glGenBuffers(1, &mesh.vbo);
+
+        glBindVertexArray(mesh.vao);
+        glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
+        glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.size() * sizeof(float)), data.data(), GL_STATIC_DRAW);
+
+        for (const VertexAttribute& attrib : attributes) {
+            glVertexAttribPointer(
+                attrib.location,
+                attrib.componentCount,
+                GL_FLOAT,
+                GL_FALSE,
+                attrib.strideFloats * static_cast<GLsizei>(sizeof(float)),
+                reinterpret_cast<void*>(attrib.offsetFloats * sizeof(float)));
+
+            glEnableVertexAttribArray(attrib.location);
+        }
+
+        return mesh;
+    }
+
+    void DestroyMesh(const Mesh& mesh) {
+        glDeleteVertexArrays(1, &mesh.vao);
+        glDeleteBuffers(1, &mesh.vbo);
+    }
+
+} // namespace
+
+void RunRenderLoop(GLFWwindow* window, const std::vector<float>& triangleVertices,
+        const std::vector<float>& cubeEdgePoints) {
+    unsigned int triangleProgram = CreateShaderProgram(trianglefVertexShaderSrc, trianglefFragmentShaderSrc);
+    unsigned int cubeProgram = CreateShaderProgram(cubeVertexShaderSrc, cubeFragmentShaderSrc);
+
+    Uniforms triangleUniforms = FindUniforms(triangleProgram);
+    Uniforms cubeUniforms = FindUniforms(cubeProgram);
+
+    Mesh triangleMesh = CreateMesh(triangleVertices, {
+        {0, 3, 7, 0},
+        {1, 3, 7, 3},
+        {2, 1, 7, 6},
+    }, 7);
+
+    Mesh cubeMesh = CreateMesh(cubeEdgePoints, {
+        {0, 3, 3, 0},
+    }, 3);
+
+    glEnable(GL_DEPTH_TEST);
+
+    const subsidiary::Matrix4x4 model = subsidiary::Identity();
+    const subsidiary::Matrix4x4 projection = subsidiary::Perspective(
+        0.785f, static_cast<float>(kWindowWidth) / kWindowHeight, 0.1f, 100.0f);
+
+    Camera camera{};
+    glfwSetWindowUserPointer(window, &camera);
+    glfwSetCursorPosCallback(window, MouseCallback);
+    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+        ProcessInput(window, camera);
+
+        const subsidiary::Matrix4x4 view = subsidiary::ViewMatrix(camera.pos, camera.pos + camera.front, camera.up);
+
+        glClearColor(0.1f, 0.2f, 0.3f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        DrawMesh(triangleProgram, triangleUniforms, triangleMesh, GL_TRIANGLES, model, view, projection);
+        DrawMesh(cubeProgram, cubeUniforms, cubeMesh, GL_LINES, model, view, projection);
+
+        glfwSwapBuffers(window);
+    }
+
+    DestroyMesh(triangleMesh);
+    DestroyMesh(cubeMesh);
+    glDeleteProgram(triangleProgram);
+    glDeleteProgram(cubeProgram);
 }
 
-void DestroyMesh(const Mesh& mesh) {
-    glDeleteVertexArrays(1, &mesh.vao);
-    glDeleteBuffers(1, &mesh.vbo);
+void ProcessInput(GLFWwindow* window, Camera& camera) {
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
+        glfwSetWindowShouldClose(window, true);
+    }
+
+    const float cameraSpeed = 0.05f;
+    geometry::Vec3 right = camera.front.FindCross(camera.up).Normalize();
+
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS) {
+        camera.pos = camera.pos + camera.front * cameraSpeed;
+    }
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS) {
+        camera.pos = camera.pos - camera.front * cameraSpeed;
+    }
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
+        camera.pos = camera.pos + right * cameraSpeed;
+    }
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
+        camera.pos = camera.pos - right * cameraSpeed;
+    }
 }
 
 GLFWwindow* CreateGLWindow(int width, int height, const char* title) {
@@ -113,66 +276,4 @@ GLFWwindow* CreateGLWindow(int width, int height, const char* title) {
     return window;
 }
 
-void MouseCallback(GLFWwindow* window, double x_coord, double y_coord) {
-    Camera* cam = static_cast<Camera*>(glfwGetWindowUserPointer(window));
-    if (!cam) {
-        std::cerr << "Failed getting a cam\n";
-        return;
-    }
-
-    if (cam->firstMouse) {
-        cam->lastX = static_cast<float>(x_coord);
-        cam->lastY = static_cast<float>(y_coord);
-        cam->firstMouse = false;
-        return;
-    }
-
-    float dx = static_cast<float>(x_coord) - cam->lastX;
-    float dy = -static_cast<float>(y_coord) + cam->lastY;
-    cam->lastX = static_cast<float>(x_coord);
-    cam->lastY = static_cast<float>(y_coord);
-
-    cam->yaw += dx * cam->mouseSensitivity;
-    cam->pitch += dy * cam->mouseSensitivity;
-
-    if (cam->pitch > 89.0f) {
-        cam->pitch = 89.0f;
-    }
-
-    if (cam->pitch < -89.0f) {
-        cam->pitch = -89.0f;
-    }
-
-    const float toRad = std::numbers::pi / 180.0f;
-    float yawR = cam->yaw * toRad;
-    float pitchR = cam->pitch * toRad;
-
-    geometry::Vec3 vec;
-    vec.SetX(std::cos(yawR) * std::cos(pitchR));
-    vec.SetY(std::sin(pitchR));
-    vec.SetZ(std::sin(yawR) * std::cos(pitchR));
-    cam->front = vec.Normalize();
-}
-
-Uniforms FindUniforms(unsigned int program) {
-    Uniforms uniforms;
-    uniforms.model = glGetUniformLocation(program, "model");
-    uniforms.view = glGetUniformLocation(program, "view");
-    uniforms.projection = glGetUniformLocation(program, "projection");
-    return uniforms;
-}
-
-void SetMat4Uniform(int location, const Matrix4x4& matrix) {
-    glUniformMatrix4fv(location, 1, GL_TRUE, &(matrix.matrix[0][0]));
-}
-
-void DrawMesh(unsigned int program, const Uniforms& uniforms, const Mesh& mesh,
-              GLenum mode, const Matrix4x4& model, const Matrix4x4& view, const Matrix4x4& projection) {
-    glUseProgram(program);
-    SetMat4Uniform(uniforms.model, model);
-    SetMat4Uniform(uniforms.view, view);
-    SetMat4Uniform(uniforms.projection, projection);
-
-    glBindVertexArray(mesh.vao);
-    glDrawArrays(mode, 0, mesh.vertexCount);
-}
+} // namespace process
