@@ -2,16 +2,28 @@
 #include <cassert>
 #include <vector>
 #include <optional>
+#include <fstream>
 
 #include "geometry_subsidiary.hpp"
 #include "subsidiary.hpp"
 #include "triangle.hpp"
 #include "input.hpp"
-
 #include "shaders.hpp"
 
-int main(void) {
-    std::optional<std::vector<geometry::Triangle>> result = ReadTriangles(std::cin);
+int main(int argc, char** argv) {
+    std::optional<std::string> parse_result = ParseCommandLine(argc, argv);
+    if (!parse_result.has_value()) {
+        return 1;
+    }
+
+    std::ifstream file;
+    std::istream* stream = SelectInput(parse_result.value(), file);
+    if (!stream) {
+        std::cerr << "error: cannot open file\n";
+        return 1;
+    }
+
+    std::optional<std::vector<geometry::Triangle>> result = ReadTriangles(*stream);
     if (result == std::nullopt) {
         return -1;
     }

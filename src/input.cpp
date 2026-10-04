@@ -3,7 +3,40 @@
 #include "triangle.hpp"
 
 #include <iostream>
+#include <string>
 #include <optional>
+#include <fstream>
+
+std::optional<std::string> ParseCommandLine(int argc, char** argv) {
+    if (argc == 1) {
+        return std::string("");
+    }
+
+    if (argc > 3) {
+        std::cerr << "Error: too many argv\n";
+        return std::nullopt;
+    }
+
+    if (std::string(argv[1]) == "--file" && argv[2]) {
+        return argv[2];
+    }
+
+    std::cerr << "error: invalid format of file input in command line\n";
+    return std::nullopt;
+}
+
+std::istream* SelectInput(const std::string& path, std::ifstream& file) {
+    if (path.empty()) {
+        return &std::cin;
+    }
+
+    file.open(path);
+    if (!file) {
+        return nullptr;
+    }
+
+    return &file;
+}
 
 std::optional<std::vector<geometry::Triangle>> ReadTriangles(std::istream& in) {
     size_t size = 0;
