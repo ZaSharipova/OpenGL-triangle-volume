@@ -7,6 +7,18 @@
 
 namespace {
 
+std::vector<bool> FindIntersectingFlagsBruteForce(const std::vector<geometry::Triangle>& triangles) {
+    std::vector<bool> intersecting(triangles.size(), false);
+    for (size_t i = 0; i < triangles.size(); i++) {
+        for (size_t j = i + 1; j < triangles.size(); j++) {
+            if (triangles[i].HaveIntersection(triangles[j])) {
+                intersecting[i] = intersecting[j] = true;
+            }
+        }
+    }
+    return intersecting;
+}
+
 float RandomFloat(float low, float high) {
     return low + (high - low) * static_cast<float>(std::rand()) / static_cast<float>(RAND_MAX);
 }
@@ -43,7 +55,7 @@ TEST(FindIntersectingFlags, GridMatchesBruteForce) {
         for (size_t count : {2, 10, 50, 200, 500}) {
             const std::vector<geometry::Triangle> triangles = GenerateTriangles(count, 10, 2);
 
-            ASSERT_EQ(FindIntersectingFlags(triangles), FindIntersectingFlags(triangles))
+            ASSERT_EQ(FindIntersectingFlags(triangles), FindIntersectingFlagsBruteForce(triangles))
                 << "seed = " << seed << ", count = " << count;
         }
     }
