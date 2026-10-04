@@ -173,3 +173,84 @@ TEST(HaveIntersection, DetectsThinSliverOverlap) {
     EXPECT_TRUE(big.HaveIntersection(sliver));
     EXPECT_TRUE(sliver.HaveIntersection(big));
 }
+
+TEST(HaveIntersectionMany, TrianglesSharingOneVertexAllIntersect) {
+    std::vector<geometry::Triangle> ts;
+    for (int i = 1; i <= 300; i++) {
+        float f = static_cast<float>(i);
+        ts.push_back(MakeTriangle({0, 0, 0}, {1, f, 1}, {f, 1, -1}));
+    }
+
+    for (size_t i = 0; i < ts.size(); i++) {
+        for (size_t j = i + 1; j < ts.size(); j++) {
+            EXPECT_TRUE(ts[i].HaveIntersection(ts[j])) << i << " " << j;
+            EXPECT_TRUE(ts[j].HaveIntersection(ts[i])) << j << " " << i;
+        }
+    }
+}
+
+TEST(HaveIntersectionMany, TrianglesSharingOneEdgeAllIntersect) {
+    std::vector<geometry::Triangle> ts;
+    for (int i = 1; i <= 300; i++) {
+        float f = static_cast<float>(i);
+        ts.push_back(MakeTriangle({0, 0, -1}, {0, 0, 1}, {f, 1, 0}));
+    }
+
+    for (size_t i = 0; i < ts.size(); i++) {
+        for (size_t j = i + 1; j < ts.size(); j++) {
+            EXPECT_TRUE(ts[i].HaveIntersection(ts[j])) << i << " " << j;
+            EXPECT_TRUE(ts[j].HaveIntersection(ts[i])) << j << " " << i;
+        }
+    }
+}
+
+TEST(HaveIntersectionMany, NestedCoplanarTrianglesAllIntersect) {
+    std::vector<geometry::Triangle> ts;
+    for (int i = 1; i <= 300; i++) {
+        float f = static_cast<float>(i);
+        ts.push_back(MakeTriangle({-f, -f, 0}, {f, -f, 0}, {0, f, 0}));
+    }
+
+    for (size_t i = 0; i < ts.size(); i++) {
+        for (size_t j = i + 1; j < ts.size(); j++) {
+            EXPECT_TRUE(ts[i].HaveIntersection(ts[j])) << i << " " << j;
+            EXPECT_TRUE(ts[j].HaveIntersection(ts[i])) << j << " " << i;
+        }
+    }
+}
+
+TEST(HaveIntersectionMany, ChainTouchingAtVerticesIntersectsOnlyNeighbours) {
+    std::vector<geometry::Triangle> ts;
+    for (int i = 0; i < 300; i++) {
+        float x = 2.0f * static_cast<float>(i);
+        ts.push_back(MakeTriangle({x, 0, 0}, {x + 2, 0, 0}, {x, 2, 0}));
+    }
+
+    for (size_t i = 0; i < ts.size(); i++) {
+        for (size_t j = i + 1; j < ts.size(); j++) {
+            bool expected = (j - i == 1);
+            EXPECT_EQ(ts[i].HaveIntersection(ts[j]), expected) << i << " " << j;
+            EXPECT_EQ(ts[j].HaveIntersection(ts[i]), expected) << j << " " << i;
+        }
+    }
+}
+
+TEST(HaveIntersectionMany, LongNeedlePiercesWholeStack) {
+    const int n = 300;
+    std::vector<geometry::Triangle> stack;
+    for (int i = 0; i < n; i++) {
+        float z = static_cast<float>(i);
+        stack.push_back(MakeTriangle({0, 0, z}, {4, 0, z}, {0, 4, z}));
+    }
+    geometry::Triangle needle =
+        MakeTriangle({0.5f, 0.5f, -1}, {0.5f, 0.5f, static_cast<float>(n)},
+                     {0.75f, 0.5f, static_cast<float>(n)});
+
+    for (size_t i = 0; i < stack.size(); i++) {
+        EXPECT_TRUE(needle.HaveIntersection(stack[i])) << i;
+        EXPECT_TRUE(stack[i].HaveIntersection(needle)) << i;
+        for (size_t j = i + 1; j < stack.size(); j++) {
+            EXPECT_FALSE(stack[i].HaveIntersection(stack[j])) << i << " " << j;
+        }
+    }
+}
