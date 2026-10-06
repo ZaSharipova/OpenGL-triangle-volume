@@ -41,34 +41,34 @@ namespace {
         return &file;
     }
 
-    std::optional<std::vector<geometry::Triangle>> ReadTriangles(std::istream& in) {
-        size_t size = 0;
-        if (!(in >> size)) {
-            std::cerr << "Failed to read size\n";
-            return std::nullopt;
-        }
+} // namespace
 
-        std::vector<geometry::Triangle> triangles;
-        triangles.reserve(size);
-
-        for (size_t i = 0; i < size; i++) {
-            float line[9] {};
-            for (float& value : line) {
-                if (!(in >> value)) {
-                    std::cerr << "Failed to read triangle #" + std::to_string(i);
-                    return std::nullopt;
-                }
-            }
-
-            triangles.emplace_back(geometry::Vec3(line[0], line[1], line[2]),
-                                   geometry::Vec3(line[3], line[4], line[5]),
-                                   geometry::Vec3(line[6], line[7], line[8]));
-        }
-
-        return triangles;
+std::optional<std::vector<geometry::Triangle>> ReadTriangles(std::istream& in) {
+    size_t size = 0;
+    if (!(in >> size)) {
+        std::cerr << "Failed to read size\n";
+        return std::nullopt;
     }
 
-} // namespace
+    std::vector<geometry::Triangle> triangles;
+    triangles.reserve(size);
+
+    for (size_t i = 0; i < size; i++) {
+        float line[9] {};
+        for (float& value : line) {
+            if (!(in >> value)) {
+                std::cerr << "Failed to read triangle #" + std::to_string(i);
+                return std::nullopt;
+            }
+        }
+
+        triangles.emplace_back(geometry::Vec3(line[0], line[1], line[2]),
+                               geometry::Vec3(line[3], line[4], line[5]),
+                               geometry::Vec3(line[6], line[7], line[8]));
+    }
+
+    return triangles;
+}
 
 std::optional<std::vector<geometry::Triangle>> LoadTriangles(int argc, char** argv) {
     std::optional<std::string> path = ParseCommandLine(argc, argv);

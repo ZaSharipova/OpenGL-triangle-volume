@@ -242,10 +242,10 @@ void ProcessInput(GLFWwindow* window, Camera& camera) {
         camera.pos = camera.pos - camera.front * cameraSpeed;
     }
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS) {
-        camera.pos = camera.pos + right * cameraSpeed;
+        camera.pos = camera.pos - right * cameraSpeed;
     }
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS) {
-        camera.pos = camera.pos - right * cameraSpeed;
+        camera.pos = camera.pos + right * cameraSpeed;
     }
 }
 

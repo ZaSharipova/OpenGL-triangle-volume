@@ -15,7 +15,7 @@ TEST(EndToEnd, NoIntersections) {
         0 0 0 1 0 0 2 0 0
         0 1 0 1 1 0 2 1 0)");
 
-    std::optional<std::vector<geometry::Triangle>> triangles = ReadTriangles(input);
+    std::optional<std::vector<geometry::Triangle>> triangles = input::ReadTriangles(input);
 
     EXPECT_TRUE(triangles.has_value());
     EXPECT_EQ(FindIntersectingFlags(triangles.value()), std::vector<bool>({false, false}));
@@ -27,7 +27,7 @@ TEST(EndToEnd, TwoIntersecting) {
         0 0 0 2 0 0 0 2 0
         0.5 0.5 -1 0.5 0.5 1 1 1 1\n)");
 
-    std::optional<std::vector<geometry::Triangle>> triangles = ReadTriangles(input);
+    std::optional<std::vector<geometry::Triangle>> triangles = input::ReadTriangles(input);
 
     EXPECT_TRUE(triangles.has_value());
     EXPECT_EQ(FindIntersectingFlags(triangles.value()), std::vector<bool>({true, true}));
@@ -40,7 +40,7 @@ TEST(EndToEnd, OneFarAway) {
     0.5 0.5 -1 0.5 0.5 1 1 1 1
     10 10 10 11 10 10 10 11 10)");
 
-    std::optional<std::vector<geometry::Triangle>> triangles = ReadTriangles(input);
+    std::optional<std::vector<geometry::Triangle>> triangles = input::ReadTriangles(input);
 
     EXPECT_TRUE(triangles.has_value());
     EXPECT_EQ(FindIntersectingFlags(triangles.value()), std::vector<bool>({true, true, false}));
@@ -53,7 +53,7 @@ TEST(EndToEnd, NonNumericInputReturnsNullopt) {
         1
         0 0 0 1 0 0 abc 0 0)");
 
-    EXPECT_FALSE(ReadTriangles(input).has_value());
+    EXPECT_FALSE(input::ReadTriangles(input).has_value());
 }
 
 TEST(EndToEnd, NotEnoughCoordinatesReturnsNullopt) {
@@ -61,7 +61,7 @@ TEST(EndToEnd, NotEnoughCoordinatesReturnsNullopt) {
         1
         0 0 0 1 0 0 2 0)");
 
-    EXPECT_FALSE(ReadTriangles(input).has_value());
+    EXPECT_FALSE(input::ReadTriangles(input).has_value());
 }
 
 TEST(EndToEnd, FewerTrianglesThanDeclaredReturnsNullopt) {
@@ -70,13 +70,13 @@ TEST(EndToEnd, FewerTrianglesThanDeclaredReturnsNullopt) {
         0 0 0 1 0 0 0 1 0
         5 5 5 6 5 5 5 6 5)");
 
-    EXPECT_FALSE(ReadTriangles(input).has_value());
+    EXPECT_FALSE(input::ReadTriangles(input).has_value());
 }
 
 TEST(EndToEnd, EmptyInputReturnsNullopt) {
     std::istringstream input("");
 
-    EXPECT_FALSE(ReadTriangles(input).has_value());
+    EXPECT_FALSE(input::ReadTriangles(input).has_value());
 }
 
 TEST(EndToEnd, NonNumericCountReturnsNullopt) {
@@ -84,7 +84,7 @@ TEST(EndToEnd, NonNumericCountReturnsNullopt) {
         two
         0 0 0 1 0 0 0 1 0)");
 
-    EXPECT_FALSE(ReadTriangles(input).has_value());
+    EXPECT_FALSE(input::ReadTriangles(input).has_value());
 }
 
 TEST(EndToEnd, CoordinateOrderIsXYZPerVertex) {
@@ -94,7 +94,7 @@ TEST(EndToEnd, CoordinateOrderIsXYZPerVertex) {
         1 1 0 2 1 0 1 2 0
         1 1 3 2 1 3 1 2 3)");
 
-    std::optional<std::vector<geometry::Triangle>> triangles = ReadTriangles(input);
+    std::optional<std::vector<geometry::Triangle>> triangles = input::ReadTriangles(input);
 
     ASSERT_TRUE(triangles.has_value());
     EXPECT_EQ(FindIntersectingFlags(triangles.value()), std::vector<bool>({true, true, false}));
@@ -109,7 +109,7 @@ TEST(EndToEnd, MixedFlags) {
         100 0 0 104 0 0 100 4 0
         101 1 0 105 1 0 101 5 0)");
 
-    std::optional<std::vector<geometry::Triangle>> triangles = ReadTriangles(input);
+    std::optional<std::vector<geometry::Triangle>> triangles = input::ReadTriangles(input);
 
     ASSERT_TRUE(triangles.has_value());
     EXPECT_EQ(FindIntersectingFlags(triangles.value()),
@@ -131,7 +131,7 @@ TEST(EndToEnd, ManyGroupsExpectedFlags) {
     }
 
     std::istringstream input(text.str());
-    std::optional<std::vector<geometry::Triangle>> triangles = ReadTriangles(input);
+    std::optional<std::vector<geometry::Triangle>> triangles = input::ReadTriangles(input);
 
     ASSERT_TRUE(triangles.has_value());
     ASSERT_EQ(triangles->size(), expected.size());
@@ -148,7 +148,7 @@ TEST(EndToEnd, ManyFarApartTrianglesNoFlags) {
     }
 
     std::istringstream input(text.str());
-    std::optional<std::vector<geometry::Triangle>> triangles = ReadTriangles(input);
+    std::optional<std::vector<geometry::Triangle>> triangles = input::ReadTriangles(input);
 
     ASSERT_TRUE(triangles.has_value());
     EXPECT_EQ(FindIntersectingFlags(triangles.value()), std::vector<bool>(count, false));
@@ -163,7 +163,7 @@ TEST(EndToEnd, ManyIdenticalTrianglesAllFlagged) {
     }
 
     std::istringstream input(text.str());
-    std::optional<std::vector<geometry::Triangle>> triangles = ReadTriangles(input);
+    std::optional<std::vector<geometry::Triangle>> triangles = input::ReadTriangles(input);
 
     ASSERT_TRUE(triangles.has_value());
     EXPECT_EQ(FindIntersectingFlags(triangles.value()), std::vector<bool>(count, true));
@@ -180,5 +180,5 @@ TEST(EndToEnd, LargeInputWithMissingTriangleReturnsNullopt) {
 
     std::istringstream input(text.str());
 
-    EXPECT_FALSE(ReadTriangles(input).has_value());
+    EXPECT_FALSE((input::ReadTriangles(input)).has_value());
 }
