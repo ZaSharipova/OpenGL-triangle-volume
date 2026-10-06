@@ -35,8 +35,8 @@ target_link_libraries(interface PUBLIC glfw OpenGL::GL)
 add_executable(gl_3d ${SRC_DIR}/main.cpp)
 target_link_libraries(gl_3d PRIVATE geometry subsidiary interface)
 
-add_executable(tests ${SRC_DIR}/test_have_intersection.cpp)
-target_link_libraries(tests PRIVATE geometry GTest::gtest_main)
+add_executable(test_intersection ${SRC_DIR}/test_have_intersection.cpp)
+target_link_libraries(test_intersection PRIVATE geometry GTest::gtest_main)
 
 add_executable(triangle_set_test ${SRC_DIR}/triangle_set_test.cpp)
 target_link_libraries(triangle_set_test PRIVATE geometry GTest::gtest_main)

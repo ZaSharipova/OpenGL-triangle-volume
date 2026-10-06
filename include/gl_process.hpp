@@ -26,6 +26,12 @@ struct Camera {
     bool firstMouse = true;
 
     float mouseSensitivity = 0.1f;
+
+    bool cursorIsActive = true;
+    bool isFullScreen = false;
+
+    int savedWidth = 0, savedHeight = 0;
+    int savedX = 0, savedY = 0;
 };
 
 void RunRenderLoop(GLFWwindow* window, const std::vector<float>& triangleVertices,

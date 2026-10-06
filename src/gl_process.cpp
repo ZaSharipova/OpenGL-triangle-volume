@@ -38,6 +38,10 @@ namespace {
             return;
         }
 
+        if (!cam->cursorIsActive) {
+            return;
+        }
+
         if (cam->firstMouse) {
             cam->lastX = static_cast<float>(x_coord);
             cam->lastY = static_cast<float>(y_coord);
@@ -175,6 +179,44 @@ namespace {
         glDeleteBuffers(1, &mesh.vbo);
     }
 
+    void ProcessFullScreenToggle(GLFWwindow* window, Camera& camera, const int nowFState) {
+        static int prevFState = GLFW_RELEASE;
+
+        if (nowFState == GLFW_PRESS && prevFState != GLFW_PRESS) {
+            if (!camera.isFullScreen) {
+                glfwGetWindowPos(window, &camera.savedX, &camera.savedY);
+                glfwGetWindowSize(window, &camera.savedWidth, &camera.savedHeight);
+                GLFWmonitor* monitor = glfwGetPrimaryMonitor();
+                const GLFWvidmode* mode = glfwGetVideoMode(monitor);
+                glfwSetWindowMonitor(window, monitor, 0, 0,
+                    mode->width, mode->height, mode->refreshRate);
+                camera.isFullScreen = true;
+            } else {
+                glfwSetWindowMonitor(window, nullptr, camera.savedX,
+                    camera.savedY, camera.savedWidth, camera.savedHeight, 0);
+                camera.isFullScreen = false;
+            }
+        }
+
+        prevFState = nowFState;
+    }
+
+    void ProcessMakeCursorFree(GLFWwindow* window, Camera& camera, const int nowTabState) {
+        static int prevTabState = GLFW_RELEASE;
+
+        if (nowTabState == GLFW_PRESS && prevTabState != GLFW_PRESS) {
+            if (camera.cursorIsActive) {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+                camera.cursorIsActive = false;
+            } else {
+                glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+                camera.cursorIsActive = true;
+            }
+        }
+
+        prevTabState = nowTabState;
+    }
+
 } // namespace
 
 void RunRenderLoop(GLFWwindow* window, const std::vector<float>& triangleVertices,
@@ -198,17 +240,28 @@ void RunRenderLoop(GLFWwindow* window, const std::vector<float>& triangleVertice
     glEnable(GL_DEPTH_TEST);
 
     const subsidiary::Matrix4x4 model = subsidiary::Identity();
-    const subsidiary::Matrix4x4 projection = subsidiary::Perspective(
-        0.785f, static_cast<float>(kWindowWidth) / kWindowHeight, 0.1f, 100.0f);
+    float aspect = static_cast<float>(kWindowWidth) / kWindowHeight;
+    subsidiary::Matrix4x4 projection = subsidiary::Perspective(
+        0.785f, aspect, 0.1f, 100.0f);
 
     Camera camera{};
     glfwSetWindowUserPointer(window, &camera);
     glfwSetCursorPosCallback(window, MouseCallback);
-    glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
         ProcessInput(window, camera);
+
+        int width = 0, height = 0;
+        glfwGetFramebufferSize(window, &width, &height);
+        glViewport(0, 0, width, height);
+
+        float newAspect = static_cast<float>(width) / height;
+        if (newAspect != aspect) {
+            projection = subsidiary::Perspective(0.785f, newAspect, 0.1f, 100.0f);
+            //std::cerr << width << " x " << height << "\n";
+            aspect = newAspect;
+        }
 
         const subsidiary::Matrix4x4 view = subsidiary::ViewMatrix(camera.pos, camera.pos + camera.front, camera.up);
 
@@ -231,6 +284,10 @@ void ProcessInput(GLFWwindow* window, Camera& camera) {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, true);
     }
+
+    ProcessMakeCursorFree(window, camera, glfwGetKey(window, GLFW_KEY_TAB));
+
+    ProcessFullScreenToggle(window, camera, glfwGetKey(window, GLFW_KEY_F));
 
     const float cameraSpeed = 0.05f;
     geometry::Vec3 right = camera.front.FindCross(camera.up).Normalize();
