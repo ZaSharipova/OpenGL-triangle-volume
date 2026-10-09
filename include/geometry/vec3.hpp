@@ -1,7 +1,7 @@
 #ifndef GEOMETRY_VEC_HPP_
 #define GEOMETRY_VEC_HPP_
 
-namespace geometry {
+namespace Geometry {
 
 class Vec3 {
 public:
@@ -38,6 +38,6 @@ inline Vec3 Cross(const Vec3& a, const Vec3& b) {
     return a.FindCross(b);
 }
 
-} // namespace geometry
+} // namespace Geometry
 
 #endif // GEOMETRY_VEC_HPP_

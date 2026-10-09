@@ -1,7 +1,7 @@
 #ifndef GEOMETRY_SHAPE_TYPE_HPP_
 #define GEOMETRY_SHAPE_TYPE_HPP_
 
-namespace geometry {
+namespace Geometry {
 
 enum class ShapeType {
     kPoint,
@@ -9,6 +9,6 @@ enum class ShapeType {
     kTriangle
 };
 
-} // namespace geometry
+} // namespace Geometry
 
 #endif // GEOMETRY_SHAPE_TYPE_HPP_

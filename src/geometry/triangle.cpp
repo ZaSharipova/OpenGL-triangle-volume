@@ -5,7 +5,7 @@
 
 #include <utility>
 
-namespace geometry {
+namespace Geometry {
 
 std::array<Vec3, 17> FindAxes(const Triangle& tr1, const Triangle& tr2);
 bool HaveOverlap(const std::pair<float, float>& A, const std::pair<float, float>& B);
@@ -171,4 +171,4 @@ bool Triangle::HaveDegenerateIntersection(const Triangle& other, ShapeType rhsSh
     return false;
 }
 
-} // namespace geometry
+} // namespace Geometry

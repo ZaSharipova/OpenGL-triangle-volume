@@ -5,10 +5,10 @@
 
 #include "triangle.hpp"
 
-namespace geometry {
+namespace Geometry {
 
 std::vector<bool> FindIntersectingFlags(const std::vector<Triangle>& triangles);
 
-} // namespace geometry
+} // namespace Geometry
 
 #endif // GEOMETRY_TRIANGLE_SET_HPP_

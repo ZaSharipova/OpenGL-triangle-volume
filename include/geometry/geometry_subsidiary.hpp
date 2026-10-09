@@ -4,7 +4,7 @@
 #include "vec3.hpp"
 #include "triangle.hpp"
 
-namespace geometry {
+namespace Geometry {
 
 inline constexpr float kEps = 1e-6f;
 
@@ -14,6 +14,6 @@ bool IsZero(const Vec3& vec);
 std::pair<Vec3, Vec3> FindBoundingBox(const Triangle& triangle);
 std::pair<Vec3, Vec3> FindBoundingBox(const std::vector<Triangle>& triangles);
 
-} // namespace geometry
+} // namespace Geometry
 
 #endif // GEOMETRY_SUBSIDIARY_HPP_

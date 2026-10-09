@@ -14,12 +14,22 @@ find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
+set(GEOMETRY_DIR ${SRC_DIR}/geometry)
 set(GEOMETRY_SOURCES
-    ${SRC_DIR}/geometry/geometry_subsidiary.cpp
-    ${SRC_DIR}/geometry/intersection.cpp
-    ${SRC_DIR}/geometry/triangle.cpp
-    ${SRC_DIR}/geometry/vec3.cpp
-    ${SRC_DIR}/geometry/triangle_set.cpp)
+    ${GEOMETRY_DIR}/geometry_subsidiary.cpp
+    ${GEOMETRY_DIR}/intersection.cpp
+    ${GEOMETRY_DIR}/triangle.cpp
+    ${GEOMETRY_DIR}/vec3.cpp
+    ${GEOMETRY_DIR}/triangle_set.cpp)
+
+set(INTERFACE_DIR ${SRC_DIR}/interface)
+set(INTERFACE_SOURCES
+    ${INTERFACE_DIR}/input.cpp
+    ${INTERFACE_DIR}/input_controller.cpp
+    ${INTERFACE_DIR}/mesh.cpp
+    ${INTERFACE_DIR}/renderer.cpp
+    ${INTERFACE_DIR}/shader_program.cpp
+    ${INTERFACE_DIR}/window.cpp)
 
 
 set(TEST_DIR ${SRC_DIR}/tests)
@@ -28,8 +38,9 @@ set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories(${INCLUDE_DIR} ${INCLUDE_DIR}/geometry)
 
 add_library(geometry ${GEOMETRY_SOURCES})
+add_library(interface ${INTERFACE_SOURCES} src/glad.c)
+target_include_directories(interface PUBLIC ${INCLUDE_DIR}/interface)
 add_library(subsidiary ${SRC_DIR}/subsidiary.cpp)
-add_library(interface ${SRC_DIR}/gl_process.cpp ${SRC_DIR}/input.cpp src/glad.c)
 target_link_libraries(interface PUBLIC glfw OpenGL::GL)
 
 add_executable(gl_3d ${SRC_DIR}/main.cpp)

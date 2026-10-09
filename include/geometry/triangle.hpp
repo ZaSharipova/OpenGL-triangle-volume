@@ -12,29 +12,29 @@
 #include "segment.hpp"
 #include "vec3.hpp"
 
-namespace geometry {
+namespace Geometry {
 
 class Triangle {
 public:
-    Triangle(geometry::Vec3 v1, geometry::Vec3 v2, geometry::Vec3 v3) : vertices{v1, v2, v3} {}
+    Triangle(Vec3 v1, Vec3 v2, Vec3 v3) : vertices{v1, v2, v3} {}
 
-    geometry::Vec3 GetEdge(int index) const;
-    geometry::Vec3 FindNormal() const;
+    Vec3 GetEdge(int index) const;
+    Vec3 FindNormal() const;
     bool HaveIntersection(const Triangle& other) const;
-    const geometry::Vec3& GetVertex(size_t index) const;
-    geometry::ShapeType FindShapeType() const;
+    const Vec3& GetVertex(size_t index) const;
+    ShapeType FindShapeType() const;
 
 private:
-    std::pair<float, float> FindMinMaxCoordsOnAxis(const geometry::Vec3& axis) const;
+    std::pair<float, float> FindMinMaxCoordsOnAxis(const Vec3& axis) const;
     bool HaveIntersectionUsingSAT(const Triangle& other) const;
-    bool HaveDegenerateIntersection(const Triangle& other, geometry::ShapeType lhsShapeType) const;
+    bool HaveDegenerateIntersection(const Triangle& other, ShapeType lhsShapeType) const;
     Segment GetLongestEdge() const;
 
-    geometry::Vec3 vertices[3];
+    Vec3 vertices[3];
 };
 
 std::vector<bool> FindIntersectingFlags(const std::vector<Triangle>& triangles);
 
-} // namespace geometry
+} // namespace Geometry
 
 #endif // TRIANGLE_HPP_

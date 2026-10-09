@@ -4,8 +4,9 @@
 #include <iostream>
 #include <vector>
 #include <optional>
+#include <numbers>
 
-namespace geometry {
+namespace Geometry {
 
 bool AreEqual(const float number1, const float number2) {
     return std::abs(number1 - number2) < kEps;
@@ -56,4 +57,4 @@ std::pair<Vec3, Vec3> FindBoundingBox(const std::vector<Triangle>& triangles) {
             Vec3(max_coord[0], max_coord[1], max_coord[2])};
 }
 
-} // namespace geometry
+} // namespace Geometry

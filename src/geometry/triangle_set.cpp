@@ -9,7 +9,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace geometry {
+namespace Geometry {
 
 namespace {
 
@@ -116,4 +116,4 @@ std::vector<bool> FindIntersectingFlags(const std::vector<Triangle>& triangles) 
     return intersecting;
 }
 
-} // namespace geometry
+} // namespace Geometry

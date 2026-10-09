@@ -7,7 +7,7 @@
 #include <optional>
 #include <fstream>
 
-namespace input {
+namespace Input {
 
 namespace {
     std::optional<std::string> ParseCommandLine(int argc, char** argv) {
@@ -43,14 +43,14 @@ namespace {
 
 } // namespace
 
-std::optional<std::vector<geometry::Triangle>> ReadTriangles(std::istream& in) {
+std::optional<std::vector<Geometry::Triangle>> ReadTriangles(std::istream& in) {
     size_t size = 0;
     if (!(in >> size)) {
         std::cerr << "Failed to read size\n";
         return std::nullopt;
     }
 
-    std::vector<geometry::Triangle> triangles;
+    std::vector<Geometry::Triangle> triangles;
     triangles.reserve(size);
 
     for (size_t i = 0; i < size; i++) {
@@ -62,15 +62,15 @@ std::optional<std::vector<geometry::Triangle>> ReadTriangles(std::istream& in) {
             }
         }
 
-        triangles.emplace_back(geometry::Vec3(line[0], line[1], line[2]),
-                               geometry::Vec3(line[3], line[4], line[5]),
-                               geometry::Vec3(line[6], line[7], line[8]));
+        triangles.emplace_back(Geometry::Vec3(line[0], line[1], line[2]),
+                               Geometry::Vec3(line[3], line[4], line[5]),
+                               Geometry::Vec3(line[6], line[7], line[8]));
     }
 
     return triangles;
 }
 
-std::optional<std::vector<geometry::Triangle>> LoadTriangles(int argc, char** argv) {
+std::optional<std::vector<Geometry::Triangle>> LoadTriangles(int argc, char** argv) {
     std::optional<std::string> path = ParseCommandLine(argc, argv);
     if (!path.has_value()) {
         return std::nullopt;
@@ -86,4 +86,4 @@ std::optional<std::vector<geometry::Triangle>> LoadTriangles(int argc, char** ar
     return ReadTriangles(*stream);
 }
 
-} // namespace input
+} // namespace Input

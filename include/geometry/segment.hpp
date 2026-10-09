@@ -3,13 +3,13 @@
 
 #include "vec3.hpp"
 
-namespace geometry {
+namespace Geometry {
 
 struct Segment {
-    geometry::Vec3 a;
-    geometry::Vec3 b;
+    Vec3 a;
+    Vec3 b;
 };
 
-} // namespace geometry
+} // namespace Geometry
 
 #endif // GEOMETRY_SEGMENT_HPP_

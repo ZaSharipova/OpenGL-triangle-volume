@@ -5,7 +5,7 @@
 
 #include <iostream>
 
-namespace geometry {
+namespace Geometry {
 
 bool IsPointOnSegment(const Vec3& point, const Segment& segment) {
     const Vec3 dir = segment.b - segment.a;
@@ -97,4 +97,4 @@ bool DoesSegmentIntersectTriangle(const Segment& segment, const Vec3& v0, const 
     return IsPointInTriangle(planeIntersection, v0, v1, v2);
 }
 
-}  // namespace geometry
+} // namespace Geometry

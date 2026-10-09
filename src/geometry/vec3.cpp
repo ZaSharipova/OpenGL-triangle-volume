@@ -3,7 +3,7 @@
 
 #include <cmath>
 
-namespace geometry {
+namespace Geometry {
 
 Vec3 Vec3::operator+(const Vec3& other) const {
     return Vec3(x_ + other.x_, y_ + other.y_, z_ + other.z_);
@@ -76,4 +76,4 @@ bool operator==(const Vec3& lhs, const Vec3& rhs) {
     return AreEqual(lhs.GetX(), rhs.GetX()) && AreEqual(lhs.GetY(), rhs.GetY()) && AreEqual(lhs.GetZ(), rhs.GetZ());
 }
 
-} // namespace geometry
+} // namespace Geometry
