@@ -22,9 +22,9 @@ public:
     float GetX() const;
     float GetY() const;
     float GetZ() const;
-    void SetX(const float& x);
-    void SetY(const float& y);
-    void SetZ(const float& z);
+    void SetX(float x);
+    void SetY(float y);
+    void SetZ(float z);
 
 private:
     float x_, y_, z_;

@@ -54,7 +54,7 @@ const Vec3& Triangle::GetVertex(size_t index) const {
 
 ShapeType Triangle::FindShapeType() const {
     Vec3 normal = FindNormal();
-    if (!AreEqual(normal.FindDot(normal), 0)) {
+    if (!IsZero(normal.FindDot(normal))) {
         return ShapeType::kTriangle;
     }
 

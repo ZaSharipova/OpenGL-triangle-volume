@@ -25,7 +25,7 @@ struct Grid {
     int resolution;
 
     int CellIndex(float value, size_t axis) const {
-        if (AreEqual(cell_width[axis], 0.0f)) {
+        if (IsZero(cell_width[axis])) {
             return 0;
         }
 
@@ -36,8 +36,8 @@ struct Grid {
 
 uint64_t MakeKey(int cx, int cy, int cz) {
     return (static_cast<uint64_t>(cx) << 42)
-           | (static_cast<uint64_t>(cy) << 21)
-           | static_cast<uint64_t>(cz);
+         | (static_cast<uint64_t>(cy) << 21)
+         |  static_cast<uint64_t>(cz);
 }
 
 Grid BuildGrid(const std::vector<Triangle>& triangles) {

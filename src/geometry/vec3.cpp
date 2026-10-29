@@ -1,6 +1,7 @@
 #include "vec3.hpp"
 #include "geometry_subsidiary.hpp"
 
+#include <cassert>
 #include <cmath>
 
 namespace Geometry {
@@ -18,6 +19,7 @@ Vec3 Vec3::operator*(const float factor) const {
 }
 
 Vec3 Vec3::operator/(const float divisor) const {
+    assert(!IsZero(divisor));
     return Vec3(x_ / divisor, y_ / divisor, z_ / divisor);
 }
 
@@ -36,12 +38,12 @@ float Vec3::FindLength() const {
 }
 
 bool Vec3::IsDegenerate() const {
-    return AreEqual(x_, 0.0f) && AreEqual(y_, 0.0f) && AreEqual(z_, 0.0f);
+    return IsZero(x_) && IsZero(y_) && IsZero(z_);
 }
 
 Vec3 Vec3::Normalize() {
     float length = FindLength();
-    if (AreEqual(length, 0.0f)) {
+    if (IsZero(length)) {
         return {0.0, 0.0, 0.0}; // TODO
     }
 
@@ -60,20 +62,21 @@ float Vec3::GetZ() const {
     return z_;
 }
 
-void Vec3::SetX(const float& x) {
+void Vec3::SetX(float x) {
     x_ = x;
 }
 
-void Vec3::SetY(const float& y) {
+void Vec3::SetY(float y) {
     y_ = y;
 }
 
-void Vec3::SetZ(const float& z) {
+void Vec3::SetZ(float z) {
     z_= z;
 }
 
 bool operator==(const Vec3& lhs, const Vec3& rhs) {
-    return AreEqual(lhs.GetX(), rhs.GetX()) && AreEqual(lhs.GetY(), rhs.GetY()) && AreEqual(lhs.GetZ(), rhs.GetZ());
+    return AreEqual(lhs.GetX(), rhs.GetX()) && AreEqual(lhs.GetY(), rhs.GetY())
+        && AreEqual(lhs.GetZ(), rhs.GetZ());
 }
 
 } // namespace Geometry
