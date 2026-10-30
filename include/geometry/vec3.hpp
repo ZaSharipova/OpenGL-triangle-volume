@@ -19,15 +19,7 @@ public:
     Vec3 Normalize();
     float FindLength() const;
     bool IsDegenerate() const;
-    float GetX() const;
-    float GetY() const;
-    float GetZ() const;
-    void SetX(float x);
-    void SetY(float y);
-    void SetZ(float z);
-
-private:
-    float x_, y_, z_;
+    float x_ = 0.0, y_ = 0.0, z_ = 0.0;
 };
 
 inline float Dot(const Vec3& a, const Vec3& b) {

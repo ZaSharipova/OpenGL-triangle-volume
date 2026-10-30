@@ -16,7 +16,7 @@ namespace {
 using CellMap = std::unordered_map<uint64_t, std::vector<size_t>>;
 
 std::array<float, 3> ToArray(const Vec3& v) {
-    return {v.GetX(), v.GetY(), v.GetZ()};
+    return {v.x_, v.y_, v.z_};
 }
 
 struct Grid {

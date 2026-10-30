@@ -1,15 +1,12 @@
 #include "mesh.hpp"
 
-Mesh CreateMesh(const std::vector<float>& data, const std::vector<VertexAttribute>& attributes,
-                GLsizei verticesPerElement) {
-    Mesh mesh;
-    mesh.vertexCount = static_cast<GLsizei>(data.size()) / verticesPerElement;
+Mesh::Mesh(const std::vector<float>& data, const std::vector<VertexAttribute>& attributes,
+           GLsizei verticesPerElement) : vertexCount_(static_cast<GLsizei>(data.size()) / verticesPerElement) {
+    glGenVertexArrays(1, &vao_);
+    glGenBuffers(1, &vbo_);
 
-    glGenVertexArrays(1, &mesh.vao);
-    glGenBuffers(1, &mesh.vbo);
-
-    glBindVertexArray(mesh.vao);
-    glBindBuffer(GL_ARRAY_BUFFER, mesh.vbo);
+    glBindVertexArray(vao_);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo_);
     glBufferData(GL_ARRAY_BUFFER, static_cast<GLsizeiptr>(data.size() * sizeof(float)), data.data(), GL_STATIC_DRAW);
 
     for (const VertexAttribute& attrib : attributes) {
@@ -23,11 +20,9 @@ Mesh CreateMesh(const std::vector<float>& data, const std::vector<VertexAttribut
 
         glEnableVertexAttribArray(attrib.location);
     }
-
-    return mesh;
 }
 
-void DestroyMesh(const Mesh& mesh) {
-    glDeleteVertexArrays(1, &mesh.vao);
-    glDeleteBuffers(1, &mesh.vbo);
+Mesh::~Mesh() {
+    glDeleteVertexArrays(1, &vao_);
+    glDeleteBuffers(1, &vbo_);
 }

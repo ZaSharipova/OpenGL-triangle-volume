@@ -27,7 +27,7 @@ std::pair<Vec3, Vec3> FindBoundingBox(const Triangle& triangle) {
 
     for (size_t i = 0; i < 3; i++) {
         const Vec3& v = triangle.GetVertex(i);
-        const std::array<float, 3> coords = {v.GetX(), v.GetY(), v.GetZ()};
+        const std::array<float, 3> coords = {v.x_, v.y_, v.z_};
         for (size_t axis = 0; axis < 3; axis++) {
             min_coord[axis] = std::min(min_coord[axis], coords[axis]);
             max_coord[axis] = std::max(max_coord[axis], coords[axis]);
@@ -45,8 +45,8 @@ std::pair<Vec3, Vec3> FindBoundingBox(const std::vector<Triangle>& triangles) {
 
     for (const Triangle& triangle : triangles) {
         const auto [box_min, box_max] = FindBoundingBox(triangle);
-        const std::array<float, 3> low = {box_min.GetX(), box_min.GetY(), box_min.GetZ()};
-        const std::array<float, 3> high = {box_max.GetX(), box_max.GetY(), box_max.GetZ()};
+        const std::array<float, 3> low = {box_min.x_, box_min.y_, box_min.z_};
+        const std::array<float, 3> high = {box_max.x_, box_max.y_, box_max.z_};
         for (size_t axis = 0; axis < 3; axis++) {
             min_coord[axis] = std::min(min_coord[axis], low[axis]);
             max_coord[axis] = std::max(max_coord[axis], high[axis]);

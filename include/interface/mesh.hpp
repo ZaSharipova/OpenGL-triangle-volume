@@ -2,8 +2,6 @@
 #define MESH_HPP_
 
 #include <glad/glad.h>
-#include <GLFW/glfw3.h>
-
 #include <vector>
 
 struct VertexAttribute {
@@ -13,13 +11,28 @@ struct VertexAttribute {
     size_t offsetFloats;
 };
 
-struct Mesh {
-    unsigned int vao = 0;
-    unsigned int vbo = 0;
-    GLsizei vertexCount = 0;
+class Mesh {
+public:
+    Mesh(const std::vector<float>& data, const std::vector<VertexAttribute>& attributes,
+         GLsizei verticesPerElement);
+    ~Mesh();
+
+    unsigned int GetVAO() const {
+        return vao_;
+    }
+
+    unsigned int GetVBO() const {
+        return vbo_;
+    }
+
+    GLsizei GetVertexCount() const {
+        return vertexCount_;
+    }
+
+private:
+    unsigned int vao_ = 0;
+    unsigned int vbo_ = 0;
+    GLsizei vertexCount_ = 0;
 };
 
-Mesh CreateMesh(const std::vector<float>& data, const std::vector<VertexAttribute>& attributes,
-                GLsizei verticesPerElement);
-void DestroyMesh(const Mesh& mesh);
 #endif // MESH_HPP_

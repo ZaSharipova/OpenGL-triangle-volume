@@ -3,6 +3,7 @@
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <memory>
 
 class Window {
 public:
@@ -10,10 +11,6 @@ public:
     static constexpr int kWindowHeight = 600;
 
     Window(int width, int height, const char *title);
-
-    ~Window() {
-        Destroy();
-    }
 
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
@@ -31,15 +28,15 @@ public:
     void ToggleFullScreen();
 
 private:
-    void Destroy() {
-        if (window_) {
-            glfwDestroyWindow(window_);
-            window_ = nullptr;
-            glfwTerminate();
+    struct WindowDeleter {
+        void operator()(GLFWwindow* window) const {
+            if (window) {
+                glfwDestroyWindow(window);
+            }
         }
-    }
+    };
 
-    GLFWwindow* window_ = nullptr;
+    std::unique_ptr<GLFWwindow, WindowDeleter> window_;
     bool isFullScreen_ = false;
     bool cursorCaptured_ = true;
 

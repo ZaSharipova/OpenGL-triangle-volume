@@ -7,11 +7,11 @@
 namespace Subsidiary {
 
 namespace {
-    void PushVertex(const Geometry::Vec3& vec, std::vector<float>& points) {
-        points.push_back(vec.GetX());
-        points.push_back(vec.GetY());
-        points.push_back(vec.GetZ());
-    }
+void PushVertex(const Geometry::Vec3& vec, std::vector<float>& points) {
+    points.push_back(vec.x_);
+    points.push_back(vec.y_);
+    points.push_back(vec.z_);
+}
 
 } // namespace
 
@@ -25,12 +25,12 @@ std::vector<float> FlattenVertices(const std::vector<Geometry::Triangle>& triang
 
         for (size_t i = 0; i < 3; i++) {
             const Geometry::Vec3& vertex = tr.GetVertex(i);
-            flat.push_back(vertex.GetX());
-            flat.push_back(vertex.GetY());
-            flat.push_back(vertex.GetZ());
-            flat.push_back(normal.GetX());
-            flat.push_back(normal.GetY());
-            flat.push_back(normal.GetZ());
+            flat.push_back(vertex.x_);
+            flat.push_back(vertex.y_);
+            flat.push_back(vertex.z_);
+            flat.push_back(normal.x_);
+            flat.push_back(normal.y_);
+            flat.push_back(normal.z_);
             flat.push_back(intersecting[tr_index]);
         }
 
@@ -60,9 +60,9 @@ Matrix4x4 ViewMatrix(const Geometry::Vec3& eye, const Geometry::Vec3& target, co
     Geometry::Vec3 right = up.FindCross(direction).Normalize(); // господи как это ужасно ;;;(((
     Geometry::Vec3 up_real = direction.FindCross(right);
 
-    return {right.GetX(), right.GetY(), right.GetZ(), -right.FindDot(eye),
-            up_real.GetX(), up_real.GetY(), up_real.GetZ(), -up_real.FindDot(eye),
-            direction.GetX(), direction.GetY(), direction.GetZ(), -direction.FindDot(eye),
+    return {right.x_, right.y_, right.z_, -right.FindDot(eye),
+            up_real.x_, up_real.y_, up_real.z_, -up_real.FindDot(eye),
+            direction.x_, direction.y_, direction.z_, -direction.FindDot(eye),
             0, 0, 0, 1};
 }
 
@@ -70,9 +70,9 @@ std::array<Geometry::Vec3, kNumberOfVerticesInCube> FindCubeCorners(const std::p
     std::array<Geometry::Vec3, kNumberOfVerticesInCube> corners;
 
     for (size_t i = 0; i < kNumberOfVerticesInCube; i++) {
-        float x = (i & 1) ? boundingBox.second.GetX() : boundingBox.first.GetX();
-        float y = (i & 2) ? boundingBox.second.GetY() : boundingBox.first.GetY();
-        float z = (i & 4) ? boundingBox.second.GetZ() : boundingBox.first.GetZ();
+        float x = (i & 1) ? boundingBox.second.x_ : boundingBox.first.x_;
+        float y = (i & 2) ? boundingBox.second.y_ : boundingBox.first.y_;
+        float z = (i & 4) ? boundingBox.second.z_ : boundingBox.first.z_;
         corners[i] = Geometry::Vec3(x, y, z);
     }
 

@@ -50,33 +50,9 @@ Vec3 Vec3::Normalize() {
     return *this / length;
 }
 
-float Vec3::GetX() const {
-    return x_;
-}
-
-float Vec3::GetY() const {
-    return y_;
-}
-
-float Vec3::GetZ() const {
-    return z_;
-}
-
-void Vec3::SetX(float x) {
-    x_ = x;
-}
-
-void Vec3::SetY(float y) {
-    y_ = y;
-}
-
-void Vec3::SetZ(float z) {
-    z_= z;
-}
-
 bool operator==(const Vec3& lhs, const Vec3& rhs) {
-    return AreEqual(lhs.GetX(), rhs.GetX()) && AreEqual(lhs.GetY(), rhs.GetY())
-        && AreEqual(lhs.GetZ(), rhs.GetZ());
+    return AreEqual(lhs.x_, rhs.x_) && AreEqual(lhs.y_, rhs.y_)
+        && AreEqual(lhs.z_, rhs.z_);
 }
 
 } // namespace Geometry

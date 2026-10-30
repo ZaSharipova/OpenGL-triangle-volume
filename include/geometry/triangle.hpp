@@ -30,7 +30,7 @@ private:
     bool HaveDegenerateIntersection(const Triangle& other, ShapeType lhsShapeType) const;
     Segment GetLongestEdge() const;
 
-    Vec3 vertices[3];
+    std::array<Vec3, 3> vertices;
 };
 
 std::vector<bool> FindIntersectingFlags(const std::vector<Triangle>& triangles);

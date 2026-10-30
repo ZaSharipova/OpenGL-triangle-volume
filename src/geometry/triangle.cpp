@@ -3,6 +3,8 @@
 #include "vec3.hpp"
 #include "geometry_subsidiary.hpp"
 
+#include <algorithm>
+#include <array>
 #include <utility>
 
 namespace Geometry {
@@ -108,23 +110,21 @@ bool Triangle::HaveIntersection(const Triangle& other) const {
 }
 
 Segment Triangle::GetLongestEdge() const {
-    const Vec3 vec[3] = {GetVertex(0), GetVertex(1), GetVertex(2)};
-    Segment best{vec[0], vec[1]};
-    float bestLen = -1;
+    const Vec3 a = GetVertex(0);
+    const Vec3 b = GetVertex(1);
+    const Vec3 c = GetVertex(2);
 
-    for (int i = 0; i < 3; i++) {
-        for (int j = i + 1; j < 3; j++) {
-            const Vec3 dist = vec[j] - vec[i];
-            const float len = Dot(dist, dist);
+    const std::array<Segment, 3> edges = {{{a, b}, {b, c}, {c, a}}};
 
-            if (len > bestLen) {
-                bestLen = len;
-                best = {vec[i], vec[j]};
-            }
-        }
-    }
+    auto LengthSq = [](const Segment& seg) {
+        const Vec3 d = seg.b - seg.a;
+        return Dot(d, d);
+    };
 
-    return best;
+    return *std::max_element(edges.begin(), edges.end(),
+        [&LengthSq](const Segment& lhs, const Segment& rhs) {
+            return LengthSq(lhs) < LengthSq(rhs);
+        });
 }
 
 bool Triangle::HaveDegenerateIntersection(const Triangle& other, ShapeType rhsShapeType) const {

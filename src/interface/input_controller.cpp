@@ -66,9 +66,9 @@ void InputController::ProcessMouse(Camera& cam, double xpos, double ypos) {
     float pitchR = cam.pitch * toRad;
 
     Geometry::Vec3 vec;
-    vec.SetX(std::cos(yawR) * std::cos(pitchR));
-    vec.SetY(std::sin(pitchR));
-    vec.SetZ(std::sin(yawR) * std::cos(pitchR));
+    vec.x_ = std::cos(yawR) * std::cos(pitchR);
+    vec.y_ = std::sin(pitchR);
+    vec.z_ = std::sin(yawR) * std::cos(pitchR);
     cam.front = vec.Normalize();
 }
 

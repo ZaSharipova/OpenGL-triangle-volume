@@ -12,11 +12,6 @@ public:
     void ProcessInput(Window& window, Camera& camera);
     void ProcessMouse(Camera& camera, double xpos, double ypos);
 
-private:
-    void ProcessFullScreenToggle(Window& window, const int nowFState);
-    void ProcessMakeCursorFree(Window& window, const int nowTabState);
-    void ResetMouse();
-
     float lastX_ = 400.0f;
     float lastY_ = 300.0f;
     bool firstMouse_ = true;
@@ -24,6 +19,11 @@ private:
 
     int prevFState_ = GLFW_RELEASE;
     int prevTabState_ = GLFW_RELEASE;
+
+private:
+    void ProcessFullScreenToggle(Window& window, const int nowFState);
+    void ProcessMakeCursorFree(Window& window, const int nowTabState);
+    void ResetMouse();
 };
 
 #endif // INPUT_CONTROLLER_HPP_

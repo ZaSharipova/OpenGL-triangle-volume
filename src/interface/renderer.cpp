@@ -42,13 +42,13 @@ void RunRenderLoop(Window& window, const std::vector<float>& triangleVertices,
     Uniforms triangleUniforms = FindUniforms(triangleProgram);
     Uniforms cubeUniforms = FindUniforms(cubeProgram);
 
-    Mesh triangleMesh = CreateMesh(triangleVertices, {
+    Mesh triangleMesh(triangleVertices, {
         {0, 3, 7, 0},
         {1, 3, 7, 3},
         {2, 1, 7, 6},
     }, 7);
 
-    Mesh cubeMesh = CreateMesh(cubeEdgePoints, {
+    Mesh cubeMesh(cubeEdgePoints, {
         {0, 3, 3, 0},
     }, 3);
 
@@ -91,8 +91,6 @@ void RunRenderLoop(Window& window, const std::vector<float>& triangleVertices,
         glfwSwapBuffers(window.GetWindow());
     }
 
-    DestroyMesh(triangleMesh);
-    DestroyMesh(cubeMesh);
     glDeleteProgram(triangleProgram);
     glDeleteProgram(cubeProgram);
 }
@@ -116,8 +114,8 @@ void DrawMesh(unsigned int program, const Uniforms& uniforms, const Mesh& mesh, 
     SetMat4Uniform(uniforms.view, view);
     SetMat4Uniform(uniforms.projection, projection);
 
-    glBindVertexArray(mesh.vao);
-    glDrawArrays(mode, 0, mesh.vertexCount);
+    glBindVertexArray(mesh.GetVAO());
+    glDrawArrays(mode, 0, mesh.GetVertexCount());
 }
 
 } // namespace Renderer
