@@ -4,6 +4,8 @@
 #include <glad/glad.h>
 #include <vector>
 
+namespace Interface {
+
 struct VertexAttribute {
     GLuint location;
     GLint componentCount;
@@ -14,7 +16,7 @@ struct VertexAttribute {
 class Mesh {
 public:
     Mesh(const std::vector<float>& data, const std::vector<VertexAttribute>& attributes,
-         GLsizei verticesPerElement);
+        GLsizei verticesPerElement);
     ~Mesh();
 
     unsigned int GetVAO() const {
@@ -34,5 +36,7 @@ private:
     unsigned int vbo_ = 0;
     GLsizei vertexCount_ = 0;
 };
+
+} // namespace Interface
 
 #endif // MESH_HPP_

@@ -1,7 +1,7 @@
 #include "intersection.hpp"
+#include "geometry_subsidiary.hpp"
 #include "segment.hpp"
 #include "vec3.hpp"
-#include "geometry_subsidiary.hpp"
 
 #include <iostream>
 
@@ -48,13 +48,10 @@ bool DoSegmentsIntersect(const Segment& first, const Segment& second) {
             return false;
         }
 
-        const float firstParam =
-            Dot(Cross(startOffset, secondDirection), directionsCross) / directionsCrossLengthSquared;
-        const float secondParam =
-            Dot(Cross(startOffset, firstDirection), directionsCross) / directionsCrossLengthSquared;
+        const float firstParam = Dot(Cross(startOffset, secondDirection), directionsCross) / directionsCrossLengthSquared;
+        const float secondParam = Dot(Cross(startOffset, firstDirection), directionsCross) / directionsCrossLengthSquared;
 
-        return firstParam >= -kEps && firstParam <= 1 + kEps &&
-               secondParam >= -kEps && secondParam <= 1 + kEps;
+        return firstParam >= -kEps && firstParam <= 1 + kEps && secondParam >= -kEps && secondParam <= 1 + kEps;
     }
 
     if (!IsZero(Cross(startOffset, firstDirection))) {
@@ -82,9 +79,7 @@ bool DoesSegmentIntersectTriangle(const Segment& segment, const Vec3& v0, const 
             return true;
         }
 
-        return DoSegmentsIntersect(segment, {v0, v1}) ||
-               DoSegmentsIntersect(segment, {v1, v2}) ||
-               DoSegmentsIntersect(segment, {v2, v0});
+        return DoSegmentsIntersect(segment, { v0, v1 }) || DoSegmentsIntersect(segment, { v1, v2 }) || DoSegmentsIntersect(segment, { v2, v0 });
     }
 
     if (startDistance * endDistance > 0) {

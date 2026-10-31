@@ -13,6 +13,6 @@ bool IsPointInTriangle(const Vec3& p, const Vec3& v0, const Vec3& v1, const Vec3
 bool DoSegmentsIntersect(const Segment& s1, const Segment& s2);
 bool DoesSegmentIntersectTriangle(const Segment& s, const Vec3& v0, const Vec3& v1, const Vec3& v2);
 
-}  // namespace Geometry
+} // namespace Geometry
 
 #endif // GEOMETRY_INTERSECTION_HPP

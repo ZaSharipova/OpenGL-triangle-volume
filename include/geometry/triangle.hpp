@@ -1,22 +1,23 @@
 #ifndef TRIANGLE_HPP_
 #define TRIANGLE_HPP_
 
+#include <algorithm>
+#include <array>
 #include <cmath>
 #include <limits>
-#include <array>
 #include <utility>
-#include <algorithm>
 #include <vector>
 
-#include "shape_type.hpp"
 #include "segment.hpp"
+#include "shape_type.hpp"
 #include "vec3.hpp"
 
 namespace Geometry {
 
 class Triangle {
 public:
-    Triangle(Vec3 v1, Vec3 v2, Vec3 v3) : vertices{v1, v2, v3} {}
+    Triangle(Vec3 v1, Vec3 v2, Vec3 v3)
+        : vertices { v1, v2, v3 } { }
 
     Vec3 GetEdge(int index) const;
     Vec3 FindNormal() const;

@@ -2,9 +2,9 @@
 
 #include <cmath>
 #include <iostream>
-#include <vector>
-#include <optional>
 #include <numbers>
+#include <optional>
+#include <vector>
 
 namespace Geometry {
 
@@ -22,39 +22,39 @@ bool IsZero(const Vec3& vec) {
 
 std::pair<Vec3, Vec3> FindBoundingBox(const Triangle& triangle) {
     constexpr float kInf = std::numeric_limits<float>::infinity();
-    std::array<float, 3> min_coord = {kInf, kInf, kInf};
-    std::array<float, 3> max_coord = {-kInf, -kInf, -kInf};
+    std::array<float, 3> min_coord = { kInf, kInf, kInf };
+    std::array<float, 3> max_coord = { -kInf, -kInf, -kInf };
 
     for (size_t i = 0; i < 3; i++) {
         const Vec3& v = triangle.GetVertex(i);
-        const std::array<float, 3> coords = {v.x_, v.y_, v.z_};
+        const std::array<float, 3> coords = { v.x_, v.y_, v.z_ };
         for (size_t axis = 0; axis < 3; axis++) {
             min_coord[axis] = std::min(min_coord[axis], coords[axis]);
             max_coord[axis] = std::max(max_coord[axis], coords[axis]);
         }
     }
 
-    return {Vec3(min_coord[0], min_coord[1], min_coord[2]),
-            Vec3(max_coord[0], max_coord[1], max_coord[2])};
+    return { Vec3(min_coord[0], min_coord[1], min_coord[2]),
+        Vec3(max_coord[0], max_coord[1], max_coord[2]) };
 }
 
 std::pair<Vec3, Vec3> FindBoundingBox(const std::vector<Triangle>& triangles) {
     constexpr float kInf = std::numeric_limits<float>::infinity();
-    std::array<float, 3> min_coord = {kInf, kInf, kInf};
-    std::array<float, 3> max_coord = {-kInf, -kInf, -kInf};
+    std::array<float, 3> min_coord = { kInf, kInf, kInf };
+    std::array<float, 3> max_coord = { -kInf, -kInf, -kInf };
 
     for (const Triangle& triangle : triangles) {
         const auto [box_min, box_max] = FindBoundingBox(triangle);
-        const std::array<float, 3> low = {box_min.x_, box_min.y_, box_min.z_};
-        const std::array<float, 3> high = {box_max.x_, box_max.y_, box_max.z_};
+        const std::array<float, 3> low = { box_min.x_, box_min.y_, box_min.z_ };
+        const std::array<float, 3> high = { box_max.x_, box_max.y_, box_max.z_ };
         for (size_t axis = 0; axis < 3; axis++) {
             min_coord[axis] = std::min(min_coord[axis], low[axis]);
             max_coord[axis] = std::max(max_coord[axis], high[axis]);
         }
     }
 
-    return {Vec3(min_coord[0], min_coord[1], min_coord[2]),
-            Vec3(max_coord[0], max_coord[1], max_coord[2])};
+    return { Vec3(min_coord[0], min_coord[1], min_coord[2]),
+        Vec3(max_coord[0], max_coord[1], max_coord[2]) };
 }
 
 } // namespace Geometry

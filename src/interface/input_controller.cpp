@@ -6,8 +6,10 @@
 #include <iostream>
 #include <numbers>
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
+
+namespace Interface {
 
 void InputController::ProcessInput(Window& window, Camera& camera) {
     if (glfwGetKey(window.GetWindow(), GLFW_KEY_ESCAPE) == GLFW_PRESS) {
@@ -94,3 +96,5 @@ void InputController::ProcessMakeCursorFree(Window& window, const int nowTabStat
 void InputController::ResetMouse() {
     firstMouse_ = true;
 }
+
+} // namespace Interface

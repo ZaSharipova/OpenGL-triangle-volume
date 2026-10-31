@@ -1,8 +1,8 @@
 #ifndef GEOMETRY_SUBSIDIARY_HPP_
 #define GEOMETRY_SUBSIDIARY_HPP_
 
-#include "vec3.hpp"
 #include "triangle.hpp"
+#include "vec3.hpp"
 
 namespace Geometry {
 

@@ -1,8 +1,10 @@
 #include "shader_program.hpp"
 
 #include <cassert>
-#include <vector>
 #include <iostream>
+#include <vector>
+
+namespace Interface {
 
 unsigned int CompileShader(GLenum type, const char* src) {
     assert(src);
@@ -14,7 +16,7 @@ unsigned int CompileShader(GLenum type, const char* src) {
     int success_flag = 0;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success_flag);
     if (!success_flag) {
-        char* log = new char [LOG_ARRAY_SIZE];
+        char* log = new char[LOG_ARRAY_SIZE];
 
         glGetShaderInfoLog(shader, LOG_ARRAY_SIZE, nullptr, log);
         std::cerr << "Shader error: " << log << "\n";
@@ -53,3 +55,5 @@ unsigned int CreateShaderProgram(const char* vertex_src, const char* fragment_sr
 
     return program;
 }
+
+} // namespace Interface

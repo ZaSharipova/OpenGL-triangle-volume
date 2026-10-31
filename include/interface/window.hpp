@@ -1,17 +1,21 @@
 #ifndef WINDOW_HPP_
 #define WINDOW_HPP_
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 #include <memory>
+#include <utility>
+
+namespace Interface {
 
 class Window {
 public:
     static constexpr int kWindowWidth = 800;
     static constexpr int kWindowHeight = 600;
 
-    Window(int width, int height, const char *title);
+    Window(int width, int height, const char* title);
 
+    Window(Window&& other) = default;
     Window(const Window&) = delete;
     Window& operator=(const Window&) = delete;
 
@@ -43,5 +47,7 @@ private:
     int savedWidth_ = 0, savedHeight_ = 0;
     int savedX_ = 0, savedY_ = 0;
 };
+
+} // namespace Interface
 
 #endif // WINDOW_HPP_

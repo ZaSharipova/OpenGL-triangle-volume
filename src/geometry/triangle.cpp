@@ -1,7 +1,7 @@
 #include "triangle.hpp"
+#include "geometry_subsidiary.hpp"
 #include "intersection.hpp"
 #include "vec3.hpp"
-#include "geometry_subsidiary.hpp"
 
 #include <algorithm>
 #include <array>
@@ -47,7 +47,7 @@ std::pair<float, float> Triangle::FindMinMaxCoordsOnAxis(const Vec3& axis) const
         max_param = std::max(max_param, value_coord);
     }
 
-    return {min_param, max_param};
+    return { min_param, max_param };
 }
 
 const Vec3& Triangle::GetVertex(size_t index) const {
@@ -75,7 +75,7 @@ bool HaveOverlap(const std::pair<float, float>& A, const std::pair<float, float>
 }
 
 std::array<Vec3, 17> FindAxes(const Triangle& tr1, const Triangle& tr2) {
-    std::array<Vec3, 17> res_array {};
+    std::array<Vec3, 17> res_array { };
     size_t res_array_index = 0;
     Vec3 normalA = tr1.FindNormal();
     Vec3 normalB = tr2.FindNormal();
@@ -114,7 +114,7 @@ Segment Triangle::GetLongestEdge() const {
     const Vec3 b = GetVertex(1);
     const Vec3 c = GetVertex(2);
 
-    const std::array<Segment, 3> edges = {{{a, b}, {b, c}, {c, a}}};
+    const std::array<Segment, 3> edges = { { { a, b }, { b, c }, { c, a } } };
 
     auto LengthSq = [](const Segment& seg) {
         const Vec3 d = seg.b - seg.a;
@@ -135,38 +135,38 @@ bool Triangle::HaveDegenerateIntersection(const Triangle& other, ShapeType rhsSh
     }
 
     switch (lhsShapeType) {
-        case ShapeType::kPoint: {
-            const Vec3 point = GetVertex(0);
-            switch (rhsShapeType) {
-                case ShapeType::kPoint:
-                    return IsZero(point - other.GetVertex(0));
-                case ShapeType::kSegment:
-                    return IsPointOnSegment(point, other.GetLongestEdge());
-                case ShapeType::kTriangle:
-                    return IsPointInTriangle(point, other.GetVertex(0), other.GetVertex(1),
-                                           other.GetVertex(2));
-            }
-
-            break;
+    case ShapeType::kPoint: {
+        const Vec3 point = GetVertex(0);
+        switch (rhsShapeType) {
+        case ShapeType::kPoint:
+            return IsZero(point - other.GetVertex(0));
+        case ShapeType::kSegment:
+            return IsPointOnSegment(point, other.GetLongestEdge());
+        case ShapeType::kTriangle:
+            return IsPointInTriangle(point, other.GetVertex(0), other.GetVertex(1),
+                other.GetVertex(2));
         }
 
-        case ShapeType::kSegment: {
-            const Segment segment = GetLongestEdge();
-            switch (rhsShapeType) {
-                case ShapeType::kSegment:
-                    return DoSegmentsIntersect(segment, other.GetLongestEdge());
-                case ShapeType::kTriangle:
-                    return DoesSegmentIntersectTriangle(segment, other.GetVertex(0), other.GetVertex(1),
-                                                     other.GetVertex(2));
-                default:
-                    break;
-            }
+        break;
+    }
 
-            break;
-        }
-
+    case ShapeType::kSegment: {
+        const Segment segment = GetLongestEdge();
+        switch (rhsShapeType) {
+        case ShapeType::kSegment:
+            return DoSegmentsIntersect(segment, other.GetLongestEdge());
+        case ShapeType::kTriangle:
+            return DoesSegmentIntersectTriangle(segment, other.GetVertex(0), other.GetVertex(1),
+                other.GetVertex(2));
         default:
             break;
+        }
+
+        break;
+    }
+
+    default:
+        break;
     }
     return false;
 }

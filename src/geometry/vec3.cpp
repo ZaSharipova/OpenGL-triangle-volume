@@ -25,8 +25,8 @@ Vec3 Vec3::operator/(const float divisor) const {
 
 Vec3 Vec3::FindCross(const Vec3& other) const {
     return Vec3(y_ * other.z_ - z_ * other.y_,
-                z_ * other.x_ - x_ * other.z_,
-                x_ * other.y_ - y_ * other.x_);
+        z_ * other.x_ - x_ * other.z_,
+        x_ * other.y_ - y_ * other.x_);
 }
 
 float Vec3::FindDot(const Vec3& other) const {
@@ -44,7 +44,7 @@ bool Vec3::IsDegenerate() const {
 Vec3 Vec3::Normalize() {
     float length = FindLength();
     if (IsZero(length)) {
-        return {0.0, 0.0, 0.0}; // TODO
+        return { 0.0, 0.0, 0.0 }; // TODO
     }
 
     return *this / length;

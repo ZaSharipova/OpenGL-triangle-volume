@@ -7,7 +7,10 @@ class Vec3 {
 public:
     friend bool operator==(const Vec3& lhs, const Vec3& rhs);
 
-    Vec3(float x, float y, float z) : x_(x), y_(y), z_(z) {}
+    Vec3(float x, float y, float z)
+        : x_(x)
+        , y_(y)
+        , z_(z) { }
     Vec3() = default;
 
     Vec3 operator+(const Vec3& other) const;

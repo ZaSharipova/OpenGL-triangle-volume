@@ -3,7 +3,9 @@
 #include <iostream>
 #include <stdexcept>
 
-Window::Window(int width, int height, const char *title) {
+namespace Interface {
+
+Window::Window(int width, int height, const char* title) {
     if (!glfwInit()) {
         throw std::runtime_error("Failed to init glfw\n");
     }
@@ -73,3 +75,5 @@ void Window::ToggleFullScreen() {
         isFullScreen_ = false;
     }
 }
+
+} // namespace Interface

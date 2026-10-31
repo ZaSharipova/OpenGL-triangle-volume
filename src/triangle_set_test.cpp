@@ -32,14 +32,14 @@ std::vector<Geometry::Triangle> GenerateTriangles(size_t count, float scene_size
         const float z = RandomFloat(0, scene_size);
 
         Geometry::Vec3 a(x + RandomFloat(-triangle_size, triangle_size),
-                         y + RandomFloat(-triangle_size, triangle_size),
-                         z + RandomFloat(-triangle_size, triangle_size));
+            y + RandomFloat(-triangle_size, triangle_size),
+            z + RandomFloat(-triangle_size, triangle_size));
         Geometry::Vec3 b(x + RandomFloat(-triangle_size, triangle_size),
-                         y + RandomFloat(-triangle_size, triangle_size),
-                         z + RandomFloat(-triangle_size, triangle_size));
+            y + RandomFloat(-triangle_size, triangle_size),
+            z + RandomFloat(-triangle_size, triangle_size));
         Geometry::Vec3 c(x + RandomFloat(-triangle_size, triangle_size),
-                         y + RandomFloat(-triangle_size, triangle_size),
-                         z + RandomFloat(-triangle_size, triangle_size));
+            y + RandomFloat(-triangle_size, triangle_size),
+            z + RandomFloat(-triangle_size, triangle_size));
 
         triangles.emplace_back(a, b, c);
     }
@@ -52,7 +52,7 @@ std::vector<Geometry::Triangle> GenerateTriangles(size_t count, float scene_size
 TEST(FindIntersectingFlags, GridMatchesBruteForce) {
     for (unsigned seed = 0; seed < 100; seed++) {
         std::srand(seed);
-        for (size_t count : {2, 10, 50, 200, 500}) {
+        for (size_t count : { 2, 10, 50, 200, 500 }) {
             const std::vector<Geometry::Triangle> triangles = GenerateTriangles(count, 10, 2);
 
             ASSERT_EQ(FindIntersectingFlags(triangles), FindIntersectingFlagsBruteForce(triangles))

@@ -4,8 +4,10 @@
 #include "camera.hpp"
 #include "window.hpp"
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
+
+namespace Interface {
 
 class InputController {
 public:
@@ -25,5 +27,7 @@ private:
     void ProcessMakeCursorFree(Window& window, const int nowTabState);
     void ResetMouse();
 };
+
+} // namespace Interface
 
 #endif // INPUT_CONTROLLER_HPP_
