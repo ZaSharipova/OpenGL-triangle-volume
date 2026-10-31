@@ -1,8 +1,8 @@
 #ifndef RENDERER_HPP_
 #define RENDERER_HPP_
 
-#include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 
 #include "mesh.hpp"
 #include "subsidiary.hpp"

@@ -44,7 +44,7 @@ bool Vec3::IsDegenerate() const {
 Vec3 Vec3::Normalize() {
     float length = FindLength();
     if (IsZero(length)) {
-        return { 0.0, 0.0, 0.0 }; // TODO
+        return { 0.0, 0.0, 0.0 };
     }
 
     return *this / length;

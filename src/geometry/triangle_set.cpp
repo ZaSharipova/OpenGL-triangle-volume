@@ -1,6 +1,5 @@
 #include "triangle_set.hpp"
 #include "geometry_subsidiary.hpp"
-#include "subsidiary.hpp"
 
 #include <algorithm>
 #include <array>
@@ -36,8 +35,8 @@ namespace {
 
     uint64_t MakeKey(int cx, int cy, int cz) {
         return (static_cast<uint64_t>(cx) << 42)
-            | (static_cast<uint64_t>(cy) << 21)
-            | static_cast<uint64_t>(cz);
+             | (static_cast<uint64_t>(cy) << 21)
+             | static_cast<uint64_t>(cz);
     }
 
     Grid BuildGrid(const std::vector<Triangle>& triangles) {

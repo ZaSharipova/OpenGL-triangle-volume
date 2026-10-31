@@ -35,7 +35,7 @@ std::pair<Vec3, Vec3> FindBoundingBox(const Triangle& triangle) {
     }
 
     return { Vec3(min_coord[0], min_coord[1], min_coord[2]),
-        Vec3(max_coord[0], max_coord[1], max_coord[2]) };
+             Vec3(max_coord[0], max_coord[1], max_coord[2]) };
 }
 
 std::pair<Vec3, Vec3> FindBoundingBox(const std::vector<Triangle>& triangles) {
@@ -54,7 +54,7 @@ std::pair<Vec3, Vec3> FindBoundingBox(const std::vector<Triangle>& triangles) {
     }
 
     return { Vec3(min_coord[0], min_coord[1], min_coord[2]),
-        Vec3(max_coord[0], max_coord[1], max_coord[2]) };
+             Vec3(max_coord[0], max_coord[1], max_coord[2]) };
 }
 
 } // namespace Geometry

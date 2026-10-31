@@ -79,7 +79,9 @@ bool DoesSegmentIntersectTriangle(const Segment& segment, const Vec3& v0, const 
             return true;
         }
 
-        return DoSegmentsIntersect(segment, { v0, v1 }) || DoSegmentsIntersect(segment, { v1, v2 }) || DoSegmentsIntersect(segment, { v2, v0 });
+        return DoSegmentsIntersect(segment, { v0, v1 })
+            || DoSegmentsIntersect(segment, { v1, v2 })
+            || DoSegmentsIntersect(segment, { v2, v0 });
     }
 
     if (startDistance * endDistance > 0) {

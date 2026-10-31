@@ -1,8 +1,8 @@
 #ifndef WINDOW_HPP_
 #define WINDOW_HPP_
 
-#include <GLFW/glfw3.h>
 #include <glad/glad.h>
+#include <GLFW/glfw3.h>
 #include <memory>
 #include <utility>
 

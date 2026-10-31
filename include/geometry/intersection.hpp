@@ -1,8 +1,6 @@
 #ifndef GEOMETRY_INTERSECTION_HPP
 #define GEOMETRY_INTERSECTION_HPP
 
-#pragma once
-
 #include "segment.hpp"
 #include "vec3.hpp"
 

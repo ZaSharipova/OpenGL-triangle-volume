@@ -1,6 +1,6 @@
 #include "geometry_subsidiary.hpp"
 #include "input.hpp"
-#include "subsidiary.hpp"
+#include "interface/subsidiary.hpp"
 #include "triangle.hpp"
 
 #include <gtest/gtest.h>
