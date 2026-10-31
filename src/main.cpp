@@ -10,6 +10,8 @@
 #include "subsidiary.hpp"
 #include "triangle.hpp"
 #include "window.hpp"
+#include "glfw_context.hpp"
+#include "triangle_set.hpp"
 
 int main(int argc, char** argv) {
     auto triangles = Interface::Input::LoadTriangles(argc, argv);
@@ -23,9 +25,9 @@ int main(int argc, char** argv) {
     const std::vector<float> cubeEdgePoints = Interface::Subsidiary::FindCubeEdgePoints(cubeCorners);
     const std::vector<float> triangleVertices = Interface::Subsidiary::FlattenVertices(*triangles, intersecting);
 
+    GLFWContext context;
     Interface::Window window(Interface::Window::kWindowWidth, Interface::Window::kWindowHeight, "OpenGL Window");
     Interface::Renderer::RunRenderLoop(window, triangleVertices, cubeEdgePoints);
 
-    glfwTerminate();
     return 0;
 }

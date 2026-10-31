@@ -34,7 +34,7 @@ private:
     std::array<Vec3, 3> vertices;
 };
 
-std::vector<bool> FindIntersectingFlags(const std::vector<Triangle>& triangles);
+// std::vector<bool> FindIntersectingFlags(const std::vector<Triangle>& triangles);
 
 } // namespace Geometry
 

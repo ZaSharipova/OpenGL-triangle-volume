@@ -3,6 +3,8 @@
 
 #include <cassert>
 #include <cmath>
+#include <iostream>
+#include <stdexcept>
 
 namespace Geometry {
 
@@ -19,7 +21,11 @@ Vec3 Vec3::operator*(const float factor) const {
 }
 
 Vec3 Vec3::operator/(const float divisor) const {
-    assert(!IsZero(divisor));
+    if (IsZero(divisor)) {
+        std::cerr << "Zero divizor\n";
+        throw std::invalid_argument("Vec3 division by zero");
+    }
+
     return Vec3(x_ / divisor, y_ / divisor, z_ / divisor);
 }
 

@@ -5,6 +5,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cassert>
 #include <utility>
 
 namespace Geometry {
@@ -51,6 +52,7 @@ std::pair<float, float> Triangle::FindMinMaxCoordsOnAxis(const Vec3& axis) const
 }
 
 const Vec3& Triangle::GetVertex(size_t index) const {
+    assert(index <= 2);
     return vertices[index];
 }
 
