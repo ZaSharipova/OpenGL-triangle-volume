@@ -5,9 +5,10 @@
 
 namespace Geometry {
 
+template <typename T>
 struct Segment {
-    Vec3 a;
-    Vec3 b;
+    Vec3<T> a;
+    Vec3<T> b;
 };
 
 } // namespace Geometry

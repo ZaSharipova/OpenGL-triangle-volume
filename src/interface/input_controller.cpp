@@ -6,8 +6,8 @@
 #include <iostream>
 #include <numbers>
 
-#include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <glad/glad.h>
 
 namespace Interface {
 
@@ -67,7 +67,7 @@ void InputController::ProcessMouse(Camera& cam, double xpos, double ypos) {
     float yawR = cam.yaw * toRad;
     float pitchR = cam.pitch * toRad;
 
-    Geometry::Vec3 vec;
+    Geometry::Vec3f vec;
     vec.x_ = std::cos(yawR) * std::cos(pitchR);
     vec.y_ = std::sin(pitchR);
     vec.z_ = std::sin(yawR) * std::cos(pitchR);

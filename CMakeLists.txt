@@ -14,13 +14,7 @@ find_package(glfw3 REQUIRED)
 find_package(OpenGL REQUIRED)
 
 set(SRC_DIR ${CMAKE_CURRENT_SOURCE_DIR}/src)
-set(GEOMETRY_DIR ${SRC_DIR}/geometry)
-set(GEOMETRY_SOURCES
-    ${GEOMETRY_DIR}/geometry_subsidiary.cpp
-    ${GEOMETRY_DIR}/intersection.cpp
-    ${GEOMETRY_DIR}/triangle.cpp
-    ${GEOMETRY_DIR}/vec3.cpp
-    ${GEOMETRY_DIR}/triangle_set.cpp)
+set(GEOMETRY_DIR ${INCLUDE_DIR}/geometry)
 
 set(INTERFACE_DIR ${SRC_DIR}/interface)
 set(INTERFACE_SOURCES
@@ -38,19 +32,18 @@ set(INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
 include_directories(${INCLUDE_DIR} ${INCLUDE_DIR}/geometry)
 
-add_library(geometry ${GEOMETRY_SOURCES})
 add_library(interface ${INTERFACE_SOURCES} src/glad.c)
 target_include_directories(interface PUBLIC ${INCLUDE_DIR}/interface)
 target_link_libraries(interface PUBLIC glfw OpenGL::GL)
 
 add_executable(gl_3d ${SRC_DIR}/main.cpp)
-target_link_libraries(gl_3d PRIVATE geometry interface)
+target_link_libraries(gl_3d PRIVATE interface)
 
 add_executable(test_intersection ${SRC_DIR}/test_have_intersection.cpp)
-target_link_libraries(test_intersection PRIVATE geometry GTest::gtest_main)
+target_link_libraries(test_intersection PRIVATE GTest::gtest_main)
 
 add_executable(triangle_set_test ${SRC_DIR}/triangle_set_test.cpp)
-target_link_libraries(triangle_set_test PRIVATE geometry GTest::gtest_main)
+target_link_libraries(triangle_set_test PRIVATE GTest::gtest_main)
 
 add_executable(test_end_to_end ${SRC_DIR}/test_end_to_end.cpp)
-target_link_libraries(test_end_to_end PRIVATE geometry interface GTest::gtest_main)
+target_link_libraries(test_end_to_end PRIVATE interface GTest::gtest_main)
