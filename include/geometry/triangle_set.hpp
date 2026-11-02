@@ -39,9 +39,13 @@ struct Grid {
 };
 
 uint64_t MakeKey(int cx, int cy, int cz) {
-    return (static_cast<uint64_t>(cx) << 42)
-            | (static_cast<uint64_t>(cy) << 21)
-            | static_cast<uint64_t>(cz);
+    assert(cx >= -(1 << 21) && cx <= (1 << 21) - 1);
+    assert(cy >= -(1 << 20) && cy <= (1 << 20) - 1);
+    assert(cz >= -(1 << 20) && cz <= (1 << 20) - 1);
+
+    return ((static_cast<uint64_t>(cx) & 0x3FFFFF) << 42)
+         | ((static_cast<uint64_t>(cy) & 0x1FFFFF) << 21)
+         |  (static_cast<uint64_t>(cz) & 0x1FFFFF);
 }
 
 template <typename T>
