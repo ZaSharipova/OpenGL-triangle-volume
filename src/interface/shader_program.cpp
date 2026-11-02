@@ -2,9 +2,39 @@
 
 #include <cassert>
 #include <iostream>
+#include <string>
 #include <vector>
 
 namespace Interface {
+
+namespace {
+
+template <typename GetParamFn, typename GetLogFn>
+std::string GetInfoLog(GLuint object, GetParamFn get_param, GetLogFn get_log) {
+    GLint length = 0;
+    get_param(object, GL_INFO_LOG_LENGTH, &length);
+
+    if (length <= 1) {
+        return {};
+    }
+
+    std::string log(static_cast<std::size_t>(length), '\0');
+    GLsizei written = 0;
+    get_log(object, length, &written, log.data());
+    log.resize(static_cast<std::size_t>(written));
+    return log;
+}
+
+std::string GetShaderInfoLog(GLuint shader) {
+    return GetInfoLog(shader, glGetShaderiv, glGetShaderInfoLog);
+}
+
+std::string GetProgramInfoLog(GLuint program) {
+    return GetInfoLog(program, glGetProgramiv, glGetProgramInfoLog);
+}
+
+} // namespace
+
 
 unsigned int CompileShader(GLenum type, const char* src) {
     assert(src);
@@ -16,11 +46,10 @@ unsigned int CompileShader(GLenum type, const char* src) {
     int success_flag = 0;
     glGetShaderiv(shader, GL_COMPILE_STATUS, &success_flag);
     if (!success_flag) {
-        char log[LOG_ARRAY_SIZE]{};
-        glGetShaderInfoLog(shader, LOG_ARRAY_SIZE, nullptr, log);
-        std::cerr << "Shader error: " << log << "\n";
+        std::string log = GetShaderInfoLog(shader);
         glDeleteShader(shader);
-        throw std::runtime_error(std::string("Shader compilation failed: ") + log);
+        std::cerr << "Shader error: " << log << "\n";
+        throw std::runtime_error("Shader compilation failed: " + log);
     }
 
     return shader;
@@ -35,11 +64,10 @@ unsigned int LinkProgram(unsigned int vertex_shader, unsigned int fragment_shade
     int linked_success_flag = 0;
     glGetProgramiv(program, GL_LINK_STATUS, &linked_success_flag);
     if (!linked_success_flag) {
-        char log[LOG_ARRAY_SIZE]{};
-        glGetProgramInfoLog(program, LOG_ARRAY_SIZE, nullptr, log);
-        std::cerr << "Link error: " << log << "\n";
+        std::string log = GetProgramInfoLog(program);
         glDeleteProgram(program);
-        throw std::runtime_error(std::string("Shader linking failed: ") + log);
+        std::cerr << "Link error: " << log << "\n";
+        throw std::runtime_error("Shader linking failed: " + log);
     }
 
     return program;
