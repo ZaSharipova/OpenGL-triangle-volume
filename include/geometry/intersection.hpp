@@ -5,6 +5,7 @@
 #include "vec3.hpp"
 
 #include <iostream>
+#include <algorithm>
 
 namespace Geometry {
 
@@ -66,8 +67,8 @@ bool DoSegmentsIntersect(const Segment<T>& first, const Segment<T>& second) {
     const T secondStartParam = Dot(startOffset, firstDirection) / firstLengthSquared;
     const T secondEndParam = Dot(second.b - first.a, firstDirection) / firstLengthSquared;
 
-    const T overlapStart = std::max(std::min(secondStartParam, secondEndParam), 0.0f);
-    const T overlapEnd = std::min(std::max(secondStartParam, secondEndParam), 1.0f);
+    const T overlapStart = std::max(std::min(secondStartParam, secondEndParam), T());
+    const T overlapEnd = std::min(std::max(secondStartParam, secondEndParam), static_cast<T>(T() + 1));
 
     return overlapStart <= overlapEnd + kEps<T>;
 }

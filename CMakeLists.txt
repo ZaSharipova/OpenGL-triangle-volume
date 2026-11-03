@@ -18,11 +18,9 @@ set(GEOMETRY_DIR ${INCLUDE_DIR}/geometry)
 
 set(INTERFACE_DIR ${SRC_DIR}/interface)
 set(INTERFACE_SOURCES
-    ${INTERFACE_DIR}/input.cpp
     ${INTERFACE_DIR}/input_controller.cpp
     ${INTERFACE_DIR}/mesh.cpp
     ${INTERFACE_DIR}/renderer.cpp
-    ${INTERFACE_DIR}/shader_program.cpp
     ${INTERFACE_DIR}/window.cpp
     ${INTERFACE_DIR}/subsidiary.cpp)
 

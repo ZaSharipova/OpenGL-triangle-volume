@@ -14,7 +14,7 @@
 #include "window.hpp"
 
 int main(int argc, char** argv) {
-    auto triangles = Interface::Input::LoadTriangles(argc, argv);
+    auto triangles = Interface::Input::LoadTriangles<float>(argc, argv);
     if (!triangles.has_value()) {
         return 1;
     }
