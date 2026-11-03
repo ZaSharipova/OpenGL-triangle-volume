@@ -22,7 +22,7 @@ std::pair<Vec3<T>, Vec3<T>> FindBoundingBox(const Triangle<T>& triangle) {
     }
 
     return { Vec3<T>(min_coord[0], min_coord[1], min_coord[2]),
-             Vec3<T>(max_coord[0], max_coord[1], max_coord[2]) };
+        Vec3<T>(max_coord[0], max_coord[1], max_coord[2]) };
 }
 
 template <typename T>
@@ -42,7 +42,7 @@ std::pair<Vec3<T>, Vec3<T>> FindBoundingBox(const std::vector<Triangle<T>>& tria
     }
 
     return { Vec3<T>(min_coord[0], min_coord[1], min_coord[2]),
-             Vec3<T>(max_coord[0], max_coord[1], max_coord[2]) };
+        Vec3<T>(max_coord[0], max_coord[1], max_coord[2]) };
 }
 
 } // namespace Geometry

@@ -4,9 +4,7 @@
 #include "camera.hpp"
 #include "window.hpp"
 
-
 #include <GLFW/glfw3.h>
-// #include <glad/glad.h>
 
 namespace Interface {
 

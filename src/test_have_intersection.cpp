@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "triangle.hpp"
 #include "config.hpp"
+#include "triangle.hpp"
 
 namespace {
 

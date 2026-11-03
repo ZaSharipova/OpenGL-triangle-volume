@@ -1,11 +1,11 @@
 #ifndef GEOMETRY_VEC_HPP_
 #define GEOMETRY_VEC_HPP_
 
-#include <type_traits>
 #include <cassert>
 #include <cmath>
 #include <iostream>
 #include <stdexcept>
+#include <type_traits>
 
 #include "geometry_constants.hpp"
 
@@ -15,7 +15,7 @@ template <typename T>
     requires std::is_floating_point_v<T>
 class Vec3 {
 public:
-    friend bool operator==(const Vec3& lhs, const Vec3& rhs) = default;
+    friend bool operator==(const Vec3& lhs, const Vec3& rhs) = default; // TODO
 
     Vec3(T x, T y, T z)
         : x_(x)
@@ -53,7 +53,6 @@ public:
     T FindDot(const Vec3& other) const {
         return x_ * other.x_ + y_ * other.y_ + z_ * other.z_;
     }
-
 
     T FindLength() const {
         return std::sqrt(FindDot(*this));

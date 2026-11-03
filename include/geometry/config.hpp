@@ -1,8 +1,8 @@
 #ifndef CONFIG_HPP_
 #define CONFIG_HPP_
 
-#include "vec3.hpp"
 #include "triangle.hpp"
+#include "vec3.hpp"
 
 namespace Geometry {
 

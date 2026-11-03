@@ -1,8 +1,8 @@
 #ifndef CAMERA_HPP_
 #define CAMERA_HPP_
 
-#include "vec3.hpp"
 #include "config.hpp"
+#include "vec3.hpp"
 
 namespace Interface {
 

@@ -1,8 +1,8 @@
 #ifndef GEOMETRY_TRIANGLE_SET_HPP_
 #define GEOMETRY_TRIANGLE_SET_HPP_
 
-#include "triangle_set.hpp"
 #include "geometry_subsidiary.hpp"
+#include "triangle_set.hpp"
 
 #include <algorithm>
 #include <array>
@@ -38,14 +38,14 @@ struct Grid {
     }
 };
 
-uint64_t MakeKey(int cx, int cy, int cz) {
+inline uint64_t MakeKey(int cx, int cy, int cz) {
     assert(cx >= -(1 << 21) && cx <= (1 << 21) - 1);
     assert(cy >= -(1 << 20) && cy <= (1 << 20) - 1);
     assert(cz >= -(1 << 20) && cz <= (1 << 20) - 1);
 
     return ((static_cast<uint64_t>(cx) & 0x3FFFFF) << 42)
-         | ((static_cast<uint64_t>(cy) & 0x1FFFFF) << 21)
-         |  (static_cast<uint64_t>(cz) & 0x1FFFFF);
+        | ((static_cast<uint64_t>(cy) & 0x1FFFFF) << 21)
+        | (static_cast<uint64_t>(cz) & 0x1FFFFF);
 }
 
 template <typename T>
@@ -129,6 +129,5 @@ std::vector<bool> FindIntersectingFlags(const std::vector<Triangle<T>>& triangle
 }
 
 } // namespace Geometry
-
 
 #endif // GEOMETRY_TRIANGLE_SET_HPP_

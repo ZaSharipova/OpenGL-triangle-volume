@@ -55,13 +55,7 @@ void InputController::ProcessMouse(Camera& cam, double xpos, double ypos) {
     cam.yaw += dx * mouseSensitivity_;
     cam.pitch += dy * mouseSensitivity_;
 
-    if (cam.pitch > 89.0f) {
-        cam.pitch = 89.0f;
-    }
-
-    if (cam.pitch < -89.0f) {
-        cam.pitch = -89.0f;
-    }
+    std::clamp(cam.pitch, -89.0f, 89.0f);
 
     const float toRad = std::numbers::pi / 180.0f;
     float yawR = cam.yaw * toRad;

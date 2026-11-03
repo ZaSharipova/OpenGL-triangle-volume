@@ -3,8 +3,8 @@
 #include <cstdlib>
 #include <vector>
 
-#include "triangle_set.hpp"
 #include "config.hpp"
+#include "triangle_set.hpp"
 
 namespace {
 

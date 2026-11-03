@@ -5,13 +5,13 @@
 #include <vector>
 
 #include "geometry_subsidiary.hpp"
+#include "glfw_context.hpp"
 #include "input.hpp"
 #include "renderer.hpp"
 #include "subsidiary.hpp"
 #include "triangle.hpp"
-#include "window.hpp"
-#include "glfw_context.hpp"
 #include "triangle_set.hpp"
+#include "window.hpp"
 
 int main(int argc, char** argv) {
     auto triangles = Interface::Input::LoadTriangles(argc, argv);

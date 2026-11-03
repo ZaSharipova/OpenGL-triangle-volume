@@ -52,8 +52,8 @@ void RunRenderLoop(Window& window, const std::vector<float>& triangleVertices,
         7);
 
     Mesh cubeMesh(cubeEdgePoints, {
-                                        { 0, 3, 3, 0 },
-                                    },
+                                      { 0, 3, 3, 0 },
+                                  },
         3);
 
     glEnable(GL_DEPTH_TEST);

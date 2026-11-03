@@ -15,10 +15,6 @@ public:
 
     Window(int width, int height, const char* title);
 
-    Window(Window&& other) = default;
-    Window(const Window&) = delete;
-    Window& operator=(const Window&) = delete;
-
     GLFWwindow* GetWindow();
     int& GetSavedWidth();
     int& GetSavedHeight();

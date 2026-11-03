@@ -90,7 +90,6 @@ public:
             return ShapeType::kTriangle;
         }
 
-
         if (GetVertex(0) == GetVertex(1) && GetVertex(0) == GetVertex(2)) {
             return ShapeType::kPoint;
         }

@@ -26,7 +26,8 @@ public:
         }
     }
 
-    VertexArray(VertexArray&& other) noexcept : vao_(other.vao_) {
+    VertexArray(VertexArray&& other) noexcept
+        : vao_(other.vao_) {
         other.vao_ = 0;
     }
 
@@ -72,7 +73,8 @@ public:
         }
     }
 
-    VertexBuffer(VertexBuffer&& other) noexcept : vbo_(other.vbo_) {
+    VertexBuffer(VertexBuffer&& other) noexcept
+        : vbo_(other.vbo_) {
         other.vbo_ = 0;
     }
 
